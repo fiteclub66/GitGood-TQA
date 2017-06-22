@@ -9,6 +9,11 @@ export class LoginComponent implements OnInit {
 
   constructor() { }
 
+
+  onSubmit() {
+  	alert("submitted");
+  }
+
   ngOnInit() {
   }
 
