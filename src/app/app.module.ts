@@ -7,13 +7,13 @@ import {HttpModule} from '@angular/http';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {AngularFireAuthModule} from 'angularfire2/auth';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LoginComponent } from './components/login/login.component';
 import { RouterModule, Routes } from '@angular/router';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { ErrorComponent } from './error/error.component';
-import { LayoutComponent } from './layout/layout.component';
-import { CalendarComponent } from './calendar/calendar.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { ErrorComponent } from './components/error/error.component';
+import { LayoutComponent } from './components/layout/layout.component';
+import { CalendarComponent } from './components/calendar/calendar.component';
 
 const appRoutes: Routes = [
     {path: '', component: LayoutComponent, children:[
