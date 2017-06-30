@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {_getAngularFireAuth, AngularFireAuth} from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-login',
@@ -7,12 +10,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  user: Observable<firebase.User>;
 
-
-  onSubmit() {
-  	alert("submitted");
+  constructor(public afAuth: AngularFireAuth) {
+    this.user = afAuth.authState;
   }
+
+
+  login() {
+
+
+    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then( function (result){
+
+      window.location.href = "/dashboard";
+
+    }).
+      catch(function (error) {
+      console.log(error.message);
+    })
+  }
+
+  logout() {
+    this.afAuth.auth.signOut();
+  }
+
 
   ngOnInit() {
   }
