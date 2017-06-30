@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {AppComponent, firebaseConfig} from './app.component';
+import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {AngularFireModule} from 'angularfire2';
@@ -14,8 +14,13 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { ErrorComponent } from './components/error/error.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
+
 import { EditComponent } from './components/meetings/edit/edit.component';
 import { ViewComponent } from './components/meetings/view/view.component';
+
+import {firebaseConfig} from "../environments/environment.prod";
+
+
 
 const appRoutes: Routes = [
     {path: '', component: LayoutComponent, children:[
