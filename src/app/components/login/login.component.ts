@@ -2,32 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {_getAngularFireAuth, AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
-import {FormControl, FormGroup} from "@angular/forms";
 import {Router} from "@angular/router";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   user: Observable<firebase.User>;
 
-  myform: FormGroup;
 
-
-  ngOnInit() {
-
-    this.myform = new FormGroup({
-      name: new FormGroup({
-        firstName: new FormControl(),
-        lastName: new FormControl(),
-      }),
-      email: new FormControl(),
-      password: new FormControl(),
-      language: new FormControl()
-    });
-  }
   constructor(public afAuth: AngularFireAuth, private router: Router) {
     this.user = afAuth.authState;
   }
