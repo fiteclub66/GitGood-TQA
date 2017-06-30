@@ -3,11 +3,34 @@
         <div class="col-4">
             <div class="card" style="margin-top: 15em;">
                 <h3 class="card-header">Login</h3>
-                <div class="card-block">
-                  <fieldset>
-                    <input class="btn btn-lg btn-success btn-block" type="submit" (click) ="login()" value="Login">
-                  </fieldset>
+
+
+              <div *ngIf="error" class="alert alert-warning" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                {{error}}
+              </div>
+              <div class="modal-dialog">
+                <div class="loginmodal-container">
+                  <h1>Login to Your Account</h1><br>
+                  <form class="form-signin" (submit)="loginEmail(email.value, password.value)">
+                    <label for="email" class="sr-only">Email address</label>
+                    <input #email type="email" id="email" class="form-control" placeholder="Email address">
+                    <label for="password" class="sr-only">Password</label>
+                    <input #password type="password" id="password" class="form-control" placeholder="Password" required="">
+                    <br>
+                    <button class="btn btn-md btn-primary btn-block" type="submit">Sign in</button>
+                  </form>
+                  <hr>
+                  <button class="login loginmodal-submit" (click)="loginGoogle()">Login With Google</button>
+                  <hr>
+                  <hr>
+                  <button class="login loginmodal-submit" (click)="createUser(email.value, password.value)">Register</button>
+                  <hr>
                 </div>
+              </div>
+
+
             </div>
         </div>
     </div>
