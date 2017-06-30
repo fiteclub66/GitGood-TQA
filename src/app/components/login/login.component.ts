@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
 
     this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then( function (result){
 
-      window.location.href = "/dashboard";
+      window.location.href = "/";
 
     }).
       catch(function (error) {
