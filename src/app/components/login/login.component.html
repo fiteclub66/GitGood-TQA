@@ -13,7 +13,7 @@
               <div class="modal-dialog">
                 <div class="loginmodal-container">
                   <h1>Login to Your Account</h1><br>
-                  <form class="form-signin" (submit)="loginEmail(email.value, password.value)">
+                  <form class="form-signin" (submit)="(authService.loginEmail(email.value, password.value))">
                     <label for="email" class="sr-only">Email address</label>
                     <input #email type="email" id="email" class="form-control" placeholder="Email address">
                     <label for="password" class="sr-only">Password</label>
@@ -22,10 +22,10 @@
                     <button class="btn btn-md btn-primary btn-block" type="submit">Sign in</button>
                   </form>
                   <hr>
-                  <button class="login loginmodal-submit" (click)="loginGoogle()">Login With Google</button>
+                  <button class="login loginmodal-submit" (click)="authService.loginGoogle()">Login With Google</button>
                   <hr>
                   <hr>
-                  <button class="login loginmodal-submit" (click)="createUser(email.value, password.value)">Register</button>
+                  <button class="login loginmodal-submit" (click)="authService.createUser(email.value, password.value)">Register</button>
                   <hr>
                 </div>
               </div>

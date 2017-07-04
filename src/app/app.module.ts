@@ -14,16 +14,19 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { ErrorComponent } from './components/error/error.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
-
+import {AuthService} from './services/auth.service';
 import { EditComponent } from './components/meetings/edit/edit.component';
 import { ViewComponent } from './components/meetings/view/view.component';
 
-import {firebaseConfig} from "../environments/environment.prod";
+import {firebaseConfig} from '../environments/environment.prod';
+import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
 
 
 
 const appRoutes: Routes = [
-    {path: '', component: LayoutComponent, children:[
+    {path: '', component: LayoutComponent,
+      canActivateChild: [CanActivateViaAuthGuardGuard],
+      children: [
       {path: '', redirectTo: 'calendar', pathMatch: 'full'},
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
@@ -31,7 +34,7 @@ const appRoutes: Routes = [
     ]},
     {path: 'login', component: LoginComponent},
     {path: '**', component: PageNotFoundComponent},
-    {path:'error', component: ErrorComponent}
+    {path: 'error', component: ErrorComponent}
   ];
 
 
@@ -58,7 +61,7 @@ const appRoutes: Routes = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [],
+  providers: [AuthService, CanActivateViaAuthGuardGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
