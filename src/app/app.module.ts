@@ -17,7 +17,7 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import {AuthService} from './services/auth.service';
 import { EditComponent } from './components/meetings/edit/edit.component';
 import { ViewComponent } from './components/meetings/view/view.component';
-
+import {ScheduleComponent} from './components/schedules/view/schedule.component'
 import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
 
@@ -31,10 +31,11 @@ const appRoutes: Routes = [
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
+        {path: 'schedule', component: ScheduleComponent}
     ]},
     {path: 'login', component: LoginComponent},
     {path: '**', component: PageNotFoundComponent},
-    {path: 'error', component: ErrorComponent}
+    {path: 'error', component: ErrorComponent},
   ];
 
 
@@ -49,7 +50,8 @@ const appRoutes: Routes = [
     LayoutComponent,
     CalendarComponent,
     EditComponent,
-    ViewComponent
+    ViewComponent,
+    ScheduleComponent
   ],
   imports: [
     NgbModule.forRoot(),

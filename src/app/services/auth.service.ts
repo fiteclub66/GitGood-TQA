@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
+import {AngularFireDatabase} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 
 
@@ -22,8 +22,6 @@ export class AuthService {
 
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function(results){
       console.log(results)
-    }).catch( function(errors){
-      console.log(errors)
     });
   }
 
@@ -60,8 +58,6 @@ export class AuthService {
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result){
       console.log(result);
       route.navigate(['/calendar']);
-    }).catch( function (error){
-      console.log(error);
     });
 
   }
@@ -69,12 +65,7 @@ export class AuthService {
   isLoggedIn() {
 
      this.afAuth.authState.subscribe(auth => {
-       if(auth) {
-         return true;
-       }
-       else {
-         return false;
-       }
+       return !!auth;
      });
   }
 
