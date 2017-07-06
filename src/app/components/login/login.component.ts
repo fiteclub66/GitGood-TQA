@@ -1,41 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {_getAngularFireAuth, AngularFireAuth} from 'angularfire2/auth';
-import * as firebase from 'firebase/app';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AuthService} from '../../services/auth.service';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-
-  user: Observable<firebase.User>;
-
-  constructor(public afAuth: AngularFireAuth) {
-    this.user = afAuth.authState;
-  }
+export class LoginComponent implements OnInit, OnDestroy{
 
 
-  login() {
+  private sub: Subscription;
 
-
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then( function (result){
-
-      window.location.href = "/dashboard";
-
-    }).
-      catch(function (error) {
-      console.log(error.message);
-    })
-  }
-
-  logout() {
-    this.afAuth.auth.signOut();
-  }
-
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
+    this.sub = this.authService.afAuth.authState.subscribe(authResp =>
+      console.log('isAuthenticated: ', authResp)
+  );
+
   }
+
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+
 
 }

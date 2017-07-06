@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {Observable} from "rxjs/Observable";
+import * as firebase from 'firebase/app';
+import {AngularFireAuth} from "angularfire2/auth";
 
 @Component({
   selector: 'app-calendar',
@@ -7,7 +10,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CalendarComponent implements OnInit {
 
-  constructor() { }
+
+  user: Observable<firebase.User>;
+
+  constructor(public afAuth: AngularFireAuth) {
+    this.user = afAuth.authState;
+  }
+
 
   ngOnInit() {
   }
