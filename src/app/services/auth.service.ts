@@ -1,11 +1,12 @@
+///<reference path="../../../node_modules/rxjs/add/operator/mergeMap.d.ts"/>
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase} from 'angularfire2/database';
+import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
-
+import 'rxjs/add/operator/mergeMap';
 
 @Injectable()
 export class AuthService {
@@ -26,28 +27,42 @@ export class AuthService {
   }
 
 
-  private getSchedule(){
+  private getEventsByRoot(): FirebaseListObservable<any>{
 
-    return this.db.object('/schedule');
+    return this.db.list('/events');
   }
 
 
-  private getScheduleYear(year: number) {
+   private getEventsByYear(year: number): FirebaseListObservable<any>{
 
-    return this.db.object('/schedule/' + year)
+    return this.db.list('/events', {
+      query: {
+        orderByChild: 'year',
+        equalTo: year
 
+      }
+    });
   }
 
-  private getScheduleHour(year: number, month: number, day: number, hour: number){
-    return this.db.object('/schedule/' + year + '/' + month + '/' + day + '/' + hour + '/')
+  private getEventsByHour(year: number, month: number, day: number, hour: number, callback){
+
+    this.getEventsByDay(year, month, day, function (dayList) {
+      callback(dayList.filter(y => y.valueOf().hour === hour));
+    });
   }
 
-  private getScheduleDay(year: number, month: number, day: number){
-    return this.db.object('/schedule/' + year + '/' + month + '/' + day + '/')
+  private getEventsByDay(year: number, month: number, day: number, callback){
+    this.getEventsByMonth(year, month, function (monthList) {
+      callback(monthList.filter(y => y.valueOf().day === day));
+    });
   }
 
-  private getScheduleMonth(year: number, month: number){
-    return this.db.object('/schedule/' + year + '/' + month )
+  private getEventsByMonth(year: number, month: number, callback){
+
+    this.getEventsByYear(year).subscribe(x => {
+      callback(x.filter(y => y.valueOf().month === month));
+    });
+
   }
 
 
@@ -90,26 +105,37 @@ export class AuthService {
   }
 
 
-   getEventsArray(kindOfData: string, value, callback): Array<any> {
-    let list;
+   public getEvents(dataType: string, object: any, callback): Array<any> {
 
-    switch (kindOfData){
+    switch (dataType){
 
       case "root":
 
-        list = this.getSchedule();
+        this.getEventsByRoot().subscribe(rootList => {
+          callback(rootList);
+        });
         break;
       case "year":
-        list = this.getScheduleYear(value.year);
+
+        this.getEventsByYear(object.year).subscribe(yearList => {
+          callback(yearList)
+        });
         break;
+
       case "month":
-        list = this.getScheduleMonth(value.year, value.month);
+        this.getEventsByMonth(object.year, object.month, function (result) {
+          callback(result);
+        });
         break;
       case "day":
-        list = this.getScheduleDay(value.year, value.month, value.day);
+        this.getEventsByDay(object.year,object.month,object.day,function (result) {
+          callback(result);
+        })
         break;
       case "hour":
-        list = this.getScheduleHour(value.year, value.month, value.day, value.hour);
+        this.getEventsByHour(object.year,object.month,object.day, object.hour,function (result) {
+          callback(result);
+        })
         break;
 
        default:
@@ -117,11 +143,25 @@ export class AuthService {
         return
     }
 
-    list.subscribe((items: Array<any>) => {
-      callback(items)
+  }
+
+
+  public createEvent(date: any, startObject: any, endObject: any){
+
+    this.getEventsByHour(date.year, date.month, date.day, startObject.hour, function (result) {
+      if(result){
+        console.log(result)
+        console.log("Sorry, that date and time is already taken!");
+      }
+      else {
+        const event = Object.assign(date, startObject, endObject);
+        this.db.database.ref('/events').push(event);
+      }
     })
 
+
   }
+
 
 
 }
