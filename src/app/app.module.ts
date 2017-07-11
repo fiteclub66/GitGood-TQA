@@ -31,10 +31,13 @@ const appRoutes: Routes = [
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
-        {path: 'schedule', component: ScheduleComponent}
+        {path: 'schedule', component: ScheduleComponent},
+        {path:'404', component: PageNotFoundComponent},
+    {path: '**', redirectTo: '/404'},
+
     ]},
     {path: 'login', component: LoginComponent},
-    {path: '**', component: PageNotFoundComponent},
+    
     {path: 'error', component: ErrorComponent},
   ];
 
