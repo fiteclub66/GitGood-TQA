@@ -21,6 +21,16 @@ export class EditComponent implements OnInit {
   }
   private sub : any;
   private id : string = "234";
+  private event: any = {
+    startingDate: {
+
+    },
+    startingTime: {
+      hour: 8
+    }
+
+  };
+
 
   ngOnDestroy(){
   	this.sub.unsubscribe()
