@@ -4,11 +4,9 @@ import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-import {reject} from "q";
-import {take} from "rxjs/operator/take";
 
 @Injectable()
 export class AuthService {
@@ -98,11 +96,16 @@ export class AuthService {
 
   }
 
-  public getEventsByMonth(reservation: any ) {
+  private getEventsByMonth(reservation: any ) {
 
     return this.getEventsByYear(reservation.year).map(_yearList => _yearList.filter(event => event.month === reservation.month));
 
   }
+
+  public getEventByID(id:string): FirebaseObjectObservable<any>{
+    return this.db.object('/events/'+id);
+  }
+
 
 
   loginEmail(email: string, password: string) {
