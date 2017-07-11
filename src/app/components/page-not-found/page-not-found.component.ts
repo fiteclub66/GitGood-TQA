@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-page-not-found',
@@ -7,9 +9,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PageNotFoundComponent implements OnInit {
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { 
+
+  }
 
   ngOnInit() {
+  	this.sub = this.route.queryParams.subscribe(queryParams => {
+  		this.message = queryParams['message'];
+  	})
+  }
+  private sub : any;
+  private message : string = "";
+
+  ngOnDestroy(){
+  	this.sub.unsubscribe()
   }
 
 }
