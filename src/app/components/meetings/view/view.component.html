@@ -5,7 +5,25 @@
     </div>
 </div>
 <div class="row">
+	<div class="col-2">
+		<p>Meeting Time: </p>
+	</div>
+	<div class="col">
+		<p>	{{meeting.year}}/{{meeting.month}}/{{meeting.day}} {{formatTime(meeting.startingHour)}} - {{formatTime(meeting.endingHour)}}</p>
+	</div>
+</div>
+<div class="row">
     <div class="col">
-        <p>details here</p>
+        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+            <ngb-panel title="Members ({{meeting.members.length}})">
+                <ng-template ngbPanelContent>
+                	<ul>
+                   <ng-template ngFor let-item [ngForOf]="meeting.members">
+                   	<li>{{item}}</li>
+                   </ng-template>
+                   </ul>
+                </ng-template>
+            </ngb-panel>
+        </ngb-accordion>
     </div>
 </div>
