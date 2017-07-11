@@ -14,6 +14,7 @@
       </li>
     </ul>
     <ul class="navbar-nav">
+      <a class="text-white navbar-brand " >{{(auth.afAuth.authState | async)?.displayName}}</a>
       <li class="nav-item dropdown" ngbDropdown>
                     <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle>
                         <i class="fa fa-user"></i> Account <b class="caret"></b>
@@ -24,7 +25,9 @@
                     </div>
                 </li>
     </ul>
+
   </div>
+
 </nav>
 <div class="container">
 <router-outlet></router-outlet>

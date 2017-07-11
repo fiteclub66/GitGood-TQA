@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
@@ -18,22 +18,21 @@ export class AuthService {
   }
 
 
-
   createUser(email, password) {
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(results){
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(function (results) {
       console.log(results)
     });
   }
 
 
-  private getEventsByRoot(): FirebaseListObservable<any>{
+  public  getEventsByRoot(): FirebaseListObservable<any> {
 
     return this.db.list('/events');
   }
 
 
-   private getEventsByYear(year: number): FirebaseListObservable<any>{
+  private getEventsByYear(year: number): FirebaseListObservable<any> {
 
     return this.db.list('/events', {
       query: {
@@ -44,33 +43,76 @@ export class AuthService {
     });
   }
 
-  private getEventsByHour(year: number, month: number, day: number, hour: number, callback){
+  private getEventsByHour(reservation: any) {
 
-    this.getEventsByDay(year, month, day, function (dayList) {
-      callback(dayList.filter(y => y.valueOf().hour === hour));
+    console.log(reservation.startingHour)
+    return this.getEventsByDay(reservation).map(_dayList => _dayList.filter(event => event.startingHour === reservation.startingHour));
+
+  }
+
+  private checkStartAndEndTime(reservation: any) {
+
+
+    return this.getEventsByDay(reservation).map(_dayList => {
+
+      const endingHourInBetween = _dayList.filter(event =>
+      event.endingHour > reservation.endingHour && event.startingHour < reservation.endingHour);
+
+      const startingHourInBetweenList = _dayList.filter(event =>
+      event.endingHour > reservation.startingHour && event.startingHour < reservation.startingHour);
+
+      const startHourList = _dayList.filter(event => event.startHour === reservation.startingHour);
+
+      if (endingHourInBetween.length > 0 || startHourList.length > 0 || startingHourInBetweenList.length > 0) {
+
+        try {
+          throw new RangeError();
+        }
+        catch (e) {
+          if (e instanceof RangeError) {
+            if (endingHourInBetween.length > 0) {
+              console.log('The ending hour overlaps with another reservation!');
+            }
+            if (startHourList.length > 0) {
+              console.log('The starting hour is already taken!');
+            }
+            if (startingHourInBetweenList.length > 0) {
+              console.log('The starting hour lands in between the time of another meeting!');
+            }
+          }
+        }
+
+        return false;
+      }
+
+        return true;
+
     });
   }
 
-  private getEventsByDay(year: number, month: number, day: number, callback){
-    this.getEventsByMonth(year, month, function (monthList) {
-      callback(monthList.filter(y => y.valueOf().day === day));
-    });
-  }
+  private getEventsByDay(reservation: any ) {
 
-  private getEventsByMonth(year: number, month: number, callback){
-
-    this.getEventsByYear(year).subscribe(x => {
-      callback(x.filter(y => y.valueOf().month === month));
-    });
+    return this.getEventsByMonth(reservation).map(_monthList => _monthList.filter(event => event.day === reservation.day));
 
   }
+
+  private getEventsByMonth(reservation: any ) {
+
+    return this.getEventsByYear(reservation.year).map(_yearList => _yearList.filter(event => event.month === reservation.month));
+
+  }
+
+  public getEventByID(id:string): FirebaseObjectObservable<any>{
+    return this.db.object('/events/'+id);
+  }
+
 
 
   loginEmail(email: string, password: string) {
 
 
     const route = this.router;
-    this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result){
+    this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result) {
       console.log(result);
       route.navigate(['/calendar']);
     });
@@ -79,16 +121,16 @@ export class AuthService {
 
   isLoggedIn() {
 
-     this.afAuth.authState.subscribe(auth => {
-       return !!auth;
-     });
+    this.afAuth.authState.subscribe(auth => {
+      return !!auth;
+    });
   }
 
   loginGoogle() {
 
     const route = this.router;
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then( function (result) {
-      route.navigate(['']) ;
+    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
+      route.navigate(['']);
       console.log(result);
     });
   }
@@ -96,7 +138,7 @@ export class AuthService {
   logout() {
     const route = this.router;
 
-    this.afAuth.auth.signOut().then( function () {
+    this.afAuth.auth.signOut().then(function () {
       route.navigate(['/login']);
       console.log("GOODBYE!");
 
@@ -105,63 +147,74 @@ export class AuthService {
   }
 
 
-   public getEvents(dataType: string, object: any, callback): Array<any> {
+  public getEvents(dataType: string, reservation: any): FirebaseListObservable<any> {
 
-    switch (dataType){
+    switch (dataType) {
 
       case "root":
 
-        this.getEventsByRoot().subscribe(rootList => {
-          callback(rootList);
-        });
-        break;
+        return this.getEventsByRoot();
       case "year":
-
-        this.getEventsByYear(object.year).subscribe(yearList => {
-          callback(yearList)
-        });
-        break;
+        return this.getEventsByYear(reservation);
 
       case "month":
-        this.getEventsByMonth(object.year, object.month, function (result) {
-          callback(result);
-        });
-        break;
-      case "day":
-        this.getEventsByDay(object.year,object.month,object.day,function (result) {
-          callback(result);
-        })
-        break;
-      case "hour":
-        this.getEventsByHour(object.year,object.month,object.day, object.hour,function (result) {
-          callback(result);
-        })
-        break;
 
-       default:
-        callback( ["ERROR: Wrong identifier"]);
-        return
+        return this.getEventsByMonth(reservation) as (FirebaseListObservable<any>);
+
+      case "day":
+
+        return this.getEventsByDay(reservation) as (FirebaseListObservable<any>);
+
+      case "hour":
+
+        return this.getEventsByHour(reservation) as (FirebaseListObservable<any>);
     }
 
   }
 
 
-  public createEvent(date: any, startObject: any, endObject: any){
+  public createEvent(date: any, startObject: any, endObject: any) {
 
-    this.getEventsByHour(date.year, date.month, date.day, startObject.hour, function (result) {
-      if(result){
-        console.log(result)
-        console.log("Sorry, that date and time is already taken!");
+
+    const reservationObject = Object.assign(date, startObject, endObject);
+
+    this.checkStartAndEndTime(reservationObject).take(1).subscribe(dateAvailable => {
+
+      if(dateAvailable){
+        this.db.list('/events').push(reservationObject)
+          .then(resolve => {
+            console.log("Event created in the database successfully")
+          })
+          .catch(error => {
+            console.log("Error occured\n" + error.message);
+          })
       }
-      else {
-        const event = Object.assign(date, startObject, endObject);
-        this.db.database.ref('/events').push(event);
+    });
+
+  }
+
+  public updateEvent(reservation: any, oldEvent: any) {
+
+    const user = firebase.auth().currentUser;
+    const self = this;
+
+    this.getEventsByHour(oldEvent).take(1).subscribe(event => {
+      console.log(event[0].$key);
+
+      if(reservation.members.includes(user.email)) {
+        self.db.object('/events/' + event[0].$key).update(reservation)
+          .then( result => {
+            console.log("Event updated successfully!");
+          })
+          .catch(error => {
+            console.log("Error: " + error.message);
+          });
       }
+
     })
 
 
   }
-
 
 
 }

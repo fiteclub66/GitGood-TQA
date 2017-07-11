@@ -1,52 +1,51 @@
 import {AuthService } from '../../../services/auth.service';
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css']
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, OnDestroy {
 
-  constructor(private route: ActivatedRoute, private router: Router, public authService: AuthService) { }
-
-   ngOnInit() {
-  	this.sub = this.route.params.subscribe(params => {
-  		this.id = params['id'];
-  		console.log('local ID', this.id);
-  		this.authService.getEvents("root" ,{}, (root) => {
-  			console.log(root);
-  			console.log(root.length);
-
-  			let meetings = root.filter(meeting => meeting.$key == this.id);
-  			console.log('matching', meetings);
-  			//if no meeting is found, redirect to 404
-  			if(meetings.length == 0)
-  			{
-  				this.router.navigate(['/404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
-  			}
-  			else{
-  				this.meeting = meetings[0]
-  			}
-  			
-  		});
-  	})
-
-    
-  }
-
-  private filterMeetings(meeting){
-  	return meeting.$key == this.id;
-  }
+  _eventByID : Subscription;
   private sub : any;
   private id : string = "234";
   private meeting : any = {};
 
+
+  constructor(private route: ActivatedRoute, private router: Router, public authService: AuthService) { }
+
+   ngOnInit() {
+
+    this.sub = this.route.params.subscribe(params => {
+      this.id = params['id'];
+      console.log('local ID', this.id);
+      this._eventByID = this.authService.getEventByID(this.id).subscribe(event => {
+        console.log('matching', event);
+
+        // if no meeting is found, redirect to 404
+        if(!event){
+          this.router.navigate(['/404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
+        }
+        else{
+          this.meeting = event
+        }
+      });
+    })
+
+
+  }
+
   //expects format like 1000, 1300
-  private formatTime(time: number) : string
+  private formatTime(time: number): string
   {
+    if(!time) {
+      return ""
+    }
+    
   	let prefix = '';
   	let am = true;
   	if(time > 1100)
@@ -64,7 +63,8 @@ export class ViewComponent implements OnInit {
   }
 
   ngOnDestroy(){
-  	this.sub.unsubscribe()
+  	this.sub.unsubscribe();
+    this._eventByID.unsubscribe();
   }
 
 }
