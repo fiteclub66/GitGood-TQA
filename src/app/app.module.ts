@@ -22,6 +22,10 @@ import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
 import { CustomFormsModule } from 'ng2-validation'
 import { Ng2CompleterModule } from "ng2-completer";
+import { CalendarModule } from 'angular-calendar';
+import 'angular-calendar/dist/css/angular-calendar.css'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 
 
@@ -64,11 +68,13 @@ const appRoutes: Routes = [
   imports: [
     NgbModule.forRoot(),
     RouterModule.forRoot(appRoutes),
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     CustomFormsModule,
     HttpModule,
     Ng2CompleterModule,
+    CalendarModule.forRoot(),
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule

@@ -26,6 +26,7 @@
     "angularfire2": "^4.0.0-rc.1",
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
+    "date-fns": "^1.28.5",
     "firebase": "^4.1.2",
     "install": "^0.10.1",
     "ng2-completer": "^1.5.2",
