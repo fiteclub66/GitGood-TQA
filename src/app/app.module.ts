@@ -20,6 +20,7 @@ import { ViewComponent } from './components/meetings/view/view.component';
 import {ScheduleComponent} from './components/schedules/view/schedule.component'
 import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
+import { CustomFormsModule } from 'ng2-validation'
 
 
 const appRoutes: Routes = [
@@ -60,6 +61,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     BrowserModule,
     FormsModule,
+    CustomFormsModule,
     HttpModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
