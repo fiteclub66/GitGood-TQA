@@ -12,8 +12,9 @@ import { CompleterService, CompleterData } from 'ng2-completer';
 })
 export class EditComponent implements OnInit, OnDestroy {
 
+  members: Subscription;
   constructor(private route: ActivatedRoute, public authService: AuthService, private completerService: CompleterService) {
-    this.dataService = completerService.local(this.users, 'name', 'name').descriptionField('email');
+
   }
 
   day: Subscription;
@@ -25,10 +26,7 @@ export class EditComponent implements OnInit, OnDestroy {
   private searchString = '';
 
 
-  private event = {
-    startingDate: {
-
-    },
+  public event = {
     startingHour: 8,
     endingHour: 9,
     members: []
@@ -42,6 +40,16 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+
+    this.members = this.authService.getMembers().subscribe(memberList =>{
+      console.log(memberList);
+      this.dataService = this.completerService.local(memberList, 'name', 'name').descriptionField('email');
+    });
+
+
+
+
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
     });
@@ -53,6 +61,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
 
+    this.members.unsubscribe();
     this.sub.unsubscribe();
     this.day.unsubscribe();
   }
