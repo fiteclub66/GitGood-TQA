@@ -34,7 +34,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(){
-    this._root.unsubscribe();
+   // this._root.unsubscribe();
   }
 
 }
