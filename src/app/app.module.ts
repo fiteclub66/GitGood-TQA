@@ -25,19 +25,18 @@ import { CustomFormsModule } from 'ng2-validation'
 
 const appRoutes: Routes = [
   {
-    path: 'u/',component: LayoutComponent,
-    canActivate: [CanActivateViaAuthGuardGuard],
+    path: 'u', component:LayoutComponent,
     canActivateChild: [CanActivateViaAuthGuardGuard],
     children: [
-      {path: 'u/calendar', component: CalendarComponent},
-      {path: 'u/meetings/:id/edit', component: EditComponent},
-      {path: 'u/meetings/:id', component: ViewComponent},
-      {path: 'u/schedule', component: ScheduleComponent},
-      {path: 'u/404', component: PageNotFoundComponent},
-      {path: 'u/**', redirectTo: '/404'}
+      {path: 'calendar', component: CalendarComponent},
+      {path: 'meetings/:id/edit', component: EditComponent},
+      {path: 'meetings/:id', component: ViewComponent},
+      {path: 'schedule', component: ScheduleComponent},
+      {path: '404', component: PageNotFoundComponent},
+      {path: '**', redirectTo: '404'}
     ]
   },
-  {path: '', redirectTo:'u/', pathMatch:'full'},
+  {path: '', redirectTo:'u', pathMatch:'full'},
 
   {path: 'login', component: LoginComponent},
 
