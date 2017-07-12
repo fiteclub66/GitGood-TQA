@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {NgModule, Pipe, PipeTransform} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
@@ -21,7 +21,6 @@ import {ScheduleComponent} from './components/schedules/view/schedule.component'
 import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
 import { CustomFormsModule } from 'ng2-validation'
-
 
 
 const appRoutes: Routes = [
