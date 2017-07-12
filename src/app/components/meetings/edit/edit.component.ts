@@ -5,7 +5,6 @@ import {AuthService } from '../../../services/auth.service';
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
 
-
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -47,8 +46,9 @@ export class EditComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
 
-    this.day = this.authService.getEvents("day", {year:2018, month:2, day:6}).subscribe(x => console.log(x));
+    this.day = this.authService.getEventsByDay({year:2018, month:2, day:6}).subscribe(x => console.log(x));
   }
+
 
 
   ngOnDestroy(){

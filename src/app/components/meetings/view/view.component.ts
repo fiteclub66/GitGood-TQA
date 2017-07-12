@@ -28,7 +28,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
         // if no meeting is found, redirect to 404
         if(!event){
-          this.router.navigate(['/404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
+          this.router.navigate(['404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
         }
         else{
           this.meeting = event
@@ -45,7 +45,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     if(!time) {
       return ""
     }
-    
+
   	let prefix = '';
   	let am = true;
   	if(time > 1100)
