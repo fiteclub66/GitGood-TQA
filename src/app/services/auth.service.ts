@@ -112,6 +112,10 @@ export class AuthService {
     return this.db.object('/events/'+id);
   }
 
+  public getMembers(): FirebaseListObservable<any>{
+    return this.db.list('/users');
+  }
+
 
 
   loginEmail(email: string, password: string) {
@@ -121,7 +125,7 @@ export class AuthService {
     const self = this;
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result) {
       console.log(result);
-      self.db.object('/users/'+result.uid).set({active:true, email: result.email});
+      self.db.object('/users/'+result.uid).set({name:result.displayName, email: result.email});
       route.navigate(['']);
     });
 
@@ -139,7 +143,7 @@ export class AuthService {
     const route = this.router;
     const self = this;
     this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
-      self.db.object('/users/'+result.user.uid).set({active:true, email: result.user.email});
+      self.db.object('/users/'+result.user.uid).set({name:result.user.displayName, email: result.user.email});
       route.navigate(['']);
       console.log(result);
     });
