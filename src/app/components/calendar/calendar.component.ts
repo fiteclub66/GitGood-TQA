@@ -23,7 +23,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-
     this.authService.getEventsByRoot().subscribe(root => {
       console.log(root[0]);
       this._root = root;

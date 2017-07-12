@@ -26,21 +26,23 @@ import { Ng2CompleterModule } from "ng2-completer";
 
 
 const appRoutes: Routes = [
-    {path: '', component: LayoutComponent,
-      canActivateChild: [CanActivateViaAuthGuardGuard],
-      children: [
-      {path: '', redirectTo: 'calendar', pathMatch: 'full'},
+  {
+    path: 'u', component:LayoutComponent,
+    canActivateChild: [CanActivateViaAuthGuardGuard],
+    children: [
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
-        {path: 'schedule', component: ScheduleComponent},
-        {path:'404', component: PageNotFoundComponent},
-    {path: '**', redirectTo: '/404'},
+      {path: 'schedule', component: ScheduleComponent},
+      {path: '404', component: PageNotFoundComponent},
+      {path: '**', redirectTo: '404'}
+    ]
+  },
+  {path: '', redirectTo:'u', pathMatch:'full'},
 
-    ]},
-    {path: 'login', component: LoginComponent},
-    
-    {path: 'error', component: ErrorComponent},
+  {path: 'login', component: LoginComponent},
+
+  {path: 'error', component: ErrorComponent},
   ];
 
 
