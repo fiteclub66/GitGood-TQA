@@ -19,26 +19,56 @@
                         </div>
                     </div>
                 </div>
+            </div>
+             <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label">Start Time</label>
                 <div class="col-2">
-                    <input type="number" name="time" class="form-control">
+                <div class="form-group">
+                        <div class="input-group">
+                    <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event.startingDate=={}" [(ngModel)]="event.startingHour">
+                    <span class="input-group-addon">
+                    	{{ event.startingHour < 12 ? "AM" : "PM"}}
+                    </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label">End Time</label>
+                <div class="col-2">
+                <div class="form-group">
+                        <div class="input-group">
+                    <input type="number" name="time" class="form-control" [(ngModel)]="event.endingHour">
+                    <span class="input-group-addon">
+                    	{{ event.endingHour < 12 ? "AM" : "PM"}}
+                    </span>
+                    </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Search</label>
+                <label for="example-search-input" class="col-2 col-form-label">Description</label>
                 <div class="col-10">
-                    <input class="form-control" type="search" value="How do I shoot web" id="example-search-input">
+                  	<textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="example-email-input" class="col-2 col-form-label">Email</label>
+                <label for="example-email-input" class="col-2 col-form-label">Add Members</label>
                 <div class="col-10">
-                    <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input">
+                    <ng2-completer [(ngModel)]="searchStr" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
                 </div>
             </div>
+           
             <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">URL</label>
+                <label for="example-url-input" class="col-2 col-form-label">Members</label>
                 <div class="col-10">
-                    <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <ul>
+                  	 <ng-template ngFor let-item [ngForOf]="event.members">
+                   	<li>{{item.name}} - {{item.email}}</li>
+
+                   </ng-template>
+                  </ul>
                 </div>
             </div>
             <div class="form-group row">
@@ -47,55 +77,13 @@
                     <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
                 </div>
             </div>
-            <div class="form-group row">
-                <label for="example-password-input" class="col-2 col-form-label">Password</label>
-                <div class="col-10">
-                    <input class="form-control" type="password" value="hunter2" id="example-password-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-number-input" class="col-2 col-form-label">Number</label>
-                <div class="col-10">
-                    <input class="form-control" type="number" value="42" id="example-number-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
-                <div class="col-10">
-                    <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-date-input" class="col-2 col-form-label">Date</label>
-                <div class="col-10">
-                    <input class="form-control" type="date" value="2011-08-19" id="example-date-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-month-input" class="col-2 col-form-label">Month</label>
-                <div class="col-10">
-                    <input class="form-control" type="month" value="2011-08" id="example-month-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-week-input" class="col-2 col-form-label">Week</label>
-                <div class="col-10">
-                    <input class="form-control" type="week" value="2011-W33" id="example-week-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-time-input" class="col-2 col-form-label">Time</label>
-                <div class="col-10">
-                    <input class="form-control" type="time" value="13:45:00" id="example-time-input">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-color-input" class="col-2 col-form-label">Color</label>
-                <div class="col-10">
-                    <input class="form-control" type="color" value="#563d7c" id="example-color-input">
-                </div>
-            </div>
         </form>
-        <p>Edit form here</p>
+
+      
     </div>
+</div>
+<div class="row">
+	<div class="col">
+		<button type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+	</div>
 </div>

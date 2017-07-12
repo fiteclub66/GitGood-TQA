@@ -21,6 +21,8 @@ import {ScheduleComponent} from './components/schedules/view/schedule.component'
 import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
 import { CustomFormsModule } from 'ng2-validation'
+import { Ng2CompleterModule } from "ng2-completer";
+
 
 
 const appRoutes: Routes = [
@@ -54,6 +56,7 @@ const appRoutes: Routes = [
     CalendarComponent,
     EditComponent,
     ViewComponent,
+
     ScheduleComponent
   ],
   imports: [
@@ -63,6 +66,7 @@ const appRoutes: Routes = [
     FormsModule,
     CustomFormsModule,
     HttpModule,
+    Ng2CompleterModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule
