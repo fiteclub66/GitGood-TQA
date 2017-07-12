@@ -38,7 +38,7 @@ const appRoutes: Routes = [
       {path: '**', redirectTo: '404'}
     ]
   },
-  {path: '', redirectTo:'u', pathMatch:'full'},
+  {path: '', redirectTo:'/u', pathMatch:'full'},
 
   {path: 'login', component: LoginComponent},
 
