@@ -20,37 +20,36 @@
                     </div>
                 </div>
             </div>
-             <div class="form-group row">
+            <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Start Time</label>
                 <div class="col-2">
-                <div class="form-group">
+                    <div class="form-group">
                         <div class="input-group">
-                    <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event.startingDate=={}" [(ngModel)]="event.startingHour">
-                    <span class="input-group-addon">
+                            <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event.startingDate=={}" [(ngModel)]="event.startingHour">
+                            <span class="input-group-addon">
                     	{{ event.startingHour < 12 ? "AM" : "PM"}}
                     </span>
-                    </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-             <div class="form-group row">
+            <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">End Time</label>
                 <div class="col-2">
-                <div class="form-group">
+                    <div class="form-group">
                         <div class="input-group">
-                    <input type="number" name="time" class="form-control" [(ngModel)]="event.endingHour">
-                    <span class="input-group-addon">
+                            <input type="number" name="time" class="form-control" [(ngModel)]="event.endingHour">
+                            <span class="input-group-addon">
                     	{{ event.endingHour < 12 ? "AM" : "PM"}}
                     </span>
-                    </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Description</label>
                 <div class="col-10">
-                  	<textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
+                    <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
                 </div>
             </div>
             <div class="form-group row">
@@ -59,26 +58,40 @@
                     <ng2-completer [(ngModel)]="searchStr" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
                 </div>
             </div>
-           
             <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Members</label>
                 <div class="col-10">
-                  <ul>
-                  	 <ng-template ngFor let-item [ngForOf]="event.members">
-                   	<li>{{item.name}} - {{item.email}}</li>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-item let-i="index" [ngForOf]="event.members">
+                            <tr>
 
-                   </ng-template>
-                  </ul>
+                                <td>{{item.name}}</td>
+                                <td>{{item.email}}</td>
+                                <td><<button type="button" (click)="removeUser(i)" class="btn btn-danger">Remove</button></td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                    <ul>
+                        <ng-template ngFor let-item [ngForOf]="event.members">
+                            <li>{{item.name}} - {{item.email}}</li>
+                        </ng-template>
+                    </ul>
                 </div>
             </div>
-            
         </form>
-
-      
     </div>
 </div>
 <div class="row">
-	<div class="col">
-		<button type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
-	</div>
+    <div class="col">
+        <button type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+    </div>
 </div>

@@ -42,6 +42,10 @@ export class EditComponent implements OnInit, OnDestroy {
     this.searchString = '';
   }
 
+  removeUser(index: number){
+    this.event.members.splice(index, 1);
+  }
+
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
