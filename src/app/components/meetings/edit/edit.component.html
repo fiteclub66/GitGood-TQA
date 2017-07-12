@@ -12,7 +12,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="event.startingDate" ngbDatepicker #d="ngbDatepicker">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="event" ngbDatepicker #d="ngbDatepicker">
                             <span class="input-group-addon" (click)="d.toggle()">
 						    	<i class="fa fa-calendar" aria-hidden="true"></i>
 						    </span>
@@ -25,8 +25,9 @@
                 <div class="col-2">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event.startingDate=={}" [(ngModel)]="event.startingHour">
-                            <span class="input-group-addon">
+                    <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event=={}" [(ngModel)]="event.startingHour">
+                    <span class="input-group-addon">
+
                     	{{ event.startingHour < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
@@ -58,6 +59,7 @@
                     <ng2-completer [(ngModel)]="searchStr" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
                 </div>
             </div>
+
             <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Members</label>
                 <div class="col-10">
@@ -87,11 +89,15 @@
                     </ul>
                 </div>
             </div>
+
         </form>
+
+
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <button type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
-    </div>
+	<div class="col">
+		<button (click)="this.authService.createEvent(this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+	</div>
+
 </div>

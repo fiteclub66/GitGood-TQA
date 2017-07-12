@@ -5,7 +5,6 @@ import {AuthService } from '../../../services/auth.service';
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
 
-
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -13,8 +12,9 @@ import { CompleterService, CompleterData } from 'ng2-completer';
 })
 export class EditComponent implements OnInit, OnDestroy {
 
+  members: Subscription;
   constructor(private route: ActivatedRoute, public authService: AuthService, private completerService: CompleterService) {
-    this.dataService = completerService.local(this.users, 'name', 'name').descriptionField('email');
+
   }
 
   day: Subscription;
@@ -26,10 +26,7 @@ export class EditComponent implements OnInit, OnDestroy {
   private searchString = '';
 
 
-  private event = {
-    startingDate: {
-
-    },
+  public event = {
     startingHour: 8,
     endingHour: 9,
     members: []
@@ -47,16 +44,28 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+
+    this.members = this.authService.getMembers().subscribe(memberList =>{
+      console.log(memberList);
+      this.dataService = this.completerService.local(memberList, 'name', 'name').descriptionField('email');
+    });
+
+
+
+
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
     });
 
-    this.day = this.authService.getEvents("day", {year:2018, month:2, day:6}).subscribe(x => console.log(x));
+    this.day = this.authService.getEventsByDay({year:2018, month:2, day:6}).subscribe(x => console.log(x));
   }
+
 
 
   ngOnDestroy(){
 
+    this.members.unsubscribe();
     this.sub.unsubscribe();
     this.day.unsubscribe();
   }

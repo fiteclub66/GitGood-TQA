@@ -11,10 +11,10 @@ import 'rxjs/add/operator/mergeMap';
 @Injectable()
 export class AuthService {
 
-  user: Observable<firebase.User>;
+  user: any;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, public db: AngularFireDatabase) {
-    this.user = afAuth.authState;
+    this.user = afAuth.auth.currentUser;
   }
 
 
@@ -32,7 +32,7 @@ export class AuthService {
   }
 
 
-  private getEventsByYear(year: number): FirebaseListObservable<any> {
+  public getEventsByYear(year: number): FirebaseListObservable<any> {
 
     return this.db.list('/events', {
       query: {
@@ -43,10 +43,12 @@ export class AuthService {
     });
   }
 
-  private getEventsByHour(reservation: any) {
+  public getEventsByHour(reservation: any): FirebaseListObservable<any> {
 
     console.log(reservation.startingHour)
-    return this.getEventsByDay(reservation).map(_dayList => _dayList.filter(event => event.startingHour === reservation.startingHour));
+    return this.getEventsByDay(reservation).map(_dayList =>
+      _dayList.filter(event =>
+      event.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
 
   }
 
@@ -90,20 +92,28 @@ export class AuthService {
     });
   }
 
-  private getEventsByDay(reservation: any ) {
+  public getEventsByDay(reservation: any ): FirebaseListObservable<any> {
 
-    return this.getEventsByMonth(reservation).map(_monthList => _monthList.filter(event => event.day === reservation.day));
+    return this.getEventsByMonth(reservation).map(_monthList =>
+      _monthList.filter(event =>
+      event.day === reservation.day)) as FirebaseListObservable<any>;
 
   }
 
-  private getEventsByMonth(reservation: any ) {
+  public getEventsByMonth(reservation: any ): FirebaseListObservable<any> {
 
-    return this.getEventsByYear(reservation.year).map(_yearList => _yearList.filter(event => event.month === reservation.month));
+    return this.getEventsByYear(reservation.year).map(_yearList =>
+      _yearList.filter(event =>
+      event.month === reservation.month)) as FirebaseListObservable<any>;
 
   }
 
   public getEventByID(id:string): FirebaseObjectObservable<any>{
     return this.db.object('/events/'+id);
+  }
+
+  public getMembers(): FirebaseListObservable<any>{
+    return this.db.list('/users');
   }
 
 
@@ -112,9 +122,11 @@ export class AuthService {
 
 
     const route = this.router;
+    const self = this;
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result) {
       console.log(result);
-      route.navigate(['/calendar']);
+      self.db.object('/users/'+result.uid).set({name:result.displayName, email: result.email});
+      route.navigate(['']);
     });
 
   }
@@ -129,7 +141,9 @@ export class AuthService {
   loginGoogle() {
 
     const route = this.router;
+    const self = this;
     this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
+      self.db.object('/users/'+result.user.uid).set({name:result.user.displayName, email: result.user.email});
       route.navigate(['']);
       console.log(result);
     });
@@ -139,49 +153,27 @@ export class AuthService {
     const route = this.router;
 
     this.afAuth.auth.signOut().then(function () {
-      route.navigate(['/login']);
+      route.navigate(['login']);
       console.log("GOODBYE!");
 
     })
 
   }
 
-
-  public getEvents(dataType: string, reservation: any): FirebaseListObservable<any> {
-
-    switch (dataType) {
-
-      case "root":
-
-        return this.getEventsByRoot();
-      case "year":
-        return this.getEventsByYear(reservation);
-
-      case "month":
-
-        return this.getEventsByMonth(reservation) as (FirebaseListObservable<any>);
-
-      case "day":
-
-        return this.getEventsByDay(reservation) as (FirebaseListObservable<any>);
-
-      case "hour":
-
-        return this.getEventsByHour(reservation) as (FirebaseListObservable<any>);
-    }
-
+  public getCurrentUserID(){
+    return this.user.uid;
   }
 
 
-  public createEvent(date: any, startObject: any, endObject: any) {
+  public createEvent(reservation: any) {
 
 
-    const reservationObject = Object.assign(date, startObject, endObject);
 
-    this.checkStartAndEndTime(reservationObject).take(1).subscribe(dateAvailable => {
+
+    this.checkStartAndEndTime(reservation).take(1).subscribe(dateAvailable => {
 
       if(dateAvailable){
-        this.db.list('/events').push(reservationObject)
+        this.db.list('/events').push(reservation)
           .then(resolve => {
             console.log("Event created in the database successfully")
           })
@@ -193,16 +185,13 @@ export class AuthService {
 
   }
 
-  public updateEvent(reservation: any, oldEvent: any) {
+  public updateEvent(id: string, updatedEvent: any) {
 
-    const user = firebase.auth().currentUser;
-    const self = this;
+    this.getEventByID(id).take(1).subscribe(event => {
+      console.log(event.$key);
 
-    this.getEventsByHour(oldEvent).take(1).subscribe(event => {
-      console.log(event[0].$key);
-
-      if(reservation.members.includes(user.email)) {
-        self.db.object('/events/' + event[0].$key).update(reservation)
+      if(event.members.includes(this.user.email)) {
+        this.db.object('/events/' + event.$key).update(updatedEvent)
           .then( result => {
             console.log("Event updated successfully!");
           })

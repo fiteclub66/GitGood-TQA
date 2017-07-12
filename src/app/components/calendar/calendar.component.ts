@@ -59,6 +59,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal) {
     this._user = afAuth.authState;
 
+
   }
   refresh: Subject<any> = new Subject();
 
@@ -174,17 +175,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.authService.getEventsByRoot().subscribe(root => {
-      console.log(root[0]);
-      this._root = root;
-    });
+
 
 
   }
 
 
   ngOnDestroy(){
-   // this._root.unsubscribe();
+
   }
 
 }
