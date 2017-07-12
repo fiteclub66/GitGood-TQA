@@ -1,24 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import * as firebase from 'firebase/app';
 import {AngularFireAuth} from "angularfire2/auth";
+import {AuthService} from "../../services/auth.service";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnDestroy {
 
 
-  user: Observable<firebase.User>;
+  constructor(public afAuth: AngularFireAuth, public authService: AuthService) {
 
-  constructor(public afAuth: AngularFireAuth) {
-    this.user = afAuth.authState;
   }
 
 
   ngOnInit() {
+
+
+
+
+  }
+
+
+  ngOnDestroy(){
+
   }
 
 }
