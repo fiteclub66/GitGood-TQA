@@ -12,9 +12,11 @@ import {Subscription} from "rxjs/Subscription";
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 
+  _user: Observable<firebase.User>;
   _root: Subscription;
 
   constructor(public afAuth: AngularFireAuth, public authService: AuthService) {
+    this._user = afAuth.authState;
 
   }
 
@@ -22,8 +24,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
 
-    // gets the UID of the current user
-    console.log(this.authService.getCurrentUserID());
+    this.authService.getEventsByRoot().subscribe(root => {
+      console.log(root[0]);
+      this._root = root;
+    });
 
 
   }

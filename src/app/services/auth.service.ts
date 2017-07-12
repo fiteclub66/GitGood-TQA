@@ -1,5 +1,6 @@
 ///<reference path="../../../node_modules/rxjs/add/operator/mergeMap.d.ts"/>
 import { Injectable } from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
@@ -10,10 +11,10 @@ import 'rxjs/add/operator/mergeMap';
 @Injectable()
 export class AuthService {
 
-  user: any;
+  user: Observable<firebase.User>;
 
   constructor(public afAuth: AngularFireAuth, public router: Router, public db: AngularFireDatabase) {
-    this.user = afAuth.auth.currentUser;
+    this.user = afAuth.authState;
   }
 
 
@@ -31,7 +32,7 @@ export class AuthService {
   }
 
 
-  public getEventsByYear(year: number): FirebaseListObservable<any> {
+  private getEventsByYear(year: number): FirebaseListObservable<any> {
 
     return this.db.list('/events', {
       query: {
@@ -42,12 +43,10 @@ export class AuthService {
     });
   }
 
-  public getEventsByHour(reservation: any): FirebaseListObservable<any> {
+  private getEventsByHour(reservation: any) {
 
     console.log(reservation.startingHour)
-    return this.getEventsByDay(reservation).map(_dayList =>
-      _dayList.filter(event =>
-      event.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
+    return this.getEventsByDay(reservation).map(_dayList => _dayList.filter(event => event.startingHour === reservation.startingHour));
 
   }
 
@@ -91,19 +90,15 @@ export class AuthService {
     });
   }
 
-  public getEventsByDay(reservation: any ): FirebaseListObservable<any> {
+  private getEventsByDay(reservation: any ) {
 
-    return this.getEventsByMonth(reservation).map(_monthList =>
-      _monthList.filter(event =>
-      event.day === reservation.day)) as FirebaseListObservable<any>;
+    return this.getEventsByMonth(reservation).map(_monthList => _monthList.filter(event => event.day === reservation.day));
 
   }
 
-  public getEventsByMonth(reservation: any ): FirebaseListObservable<any> {
+  private getEventsByMonth(reservation: any ) {
 
-    return this.getEventsByYear(reservation.year).map(_yearList =>
-      _yearList.filter(event =>
-      event.month === reservation.month)) as FirebaseListObservable<any>;
+    return this.getEventsByYear(reservation.year).map(_yearList => _yearList.filter(event => event.month === reservation.month));
 
   }
 
@@ -151,20 +146,42 @@ export class AuthService {
 
   }
 
-  public getCurrentUserID(){
-    return this.user.uid;
+
+  public getEvents(dataType: string, reservation: any): FirebaseListObservable<any> {
+
+    switch (dataType) {
+
+      case "root":
+
+        return this.getEventsByRoot();
+      case "year":
+        return this.getEventsByYear(reservation);
+
+      case "month":
+
+        return this.getEventsByMonth(reservation) as (FirebaseListObservable<any>);
+
+      case "day":
+
+        return this.getEventsByDay(reservation) as (FirebaseListObservable<any>);
+
+      case "hour":
+
+        return this.getEventsByHour(reservation) as (FirebaseListObservable<any>);
+    }
+
   }
 
 
-  public createEvent(reservation: any) {
+  public createEvent(date: any, startObject: any, endObject: any) {
 
 
+    const reservationObject = Object.assign(date, startObject, endObject);
 
-
-    this.checkStartAndEndTime(reservation).take(1).subscribe(dateAvailable => {
+    this.checkStartAndEndTime(reservationObject).take(1).subscribe(dateAvailable => {
 
       if(dateAvailable){
-        this.db.list('/events').push(reservation)
+        this.db.list('/events').push(reservationObject)
           .then(resolve => {
             console.log("Event created in the database successfully")
           })
@@ -176,13 +193,16 @@ export class AuthService {
 
   }
 
-  public updateEvent(id: string, updatedEvent: any) {
+  public updateEvent(reservation: any, oldEvent: any) {
 
-    this.getEventByID(id).take(1).subscribe(event => {
-      console.log(event.$key);
+    const user = firebase.auth().currentUser;
+    const self = this;
 
-      if(event.members.includes(this.user.email)) {
-        this.db.object('/events/' + event.$key).update(updatedEvent)
+    this.getEventsByHour(oldEvent).take(1).subscribe(event => {
+      console.log(event[0].$key);
+
+      if(reservation.members.includes(user.email)) {
+        self.db.object('/events/' + event[0].$key).update(reservation)
           .then( result => {
             console.log("Event updated successfully!");
           })
