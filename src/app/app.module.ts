@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {NgModule, Pipe, PipeTransform} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
@@ -20,22 +20,33 @@ import { ViewComponent } from './components/meetings/view/view.component';
 import {ScheduleComponent} from './components/schedules/view/schedule.component'
 import {firebaseConfig} from '../environments/environment.prod';
 import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard.guard";
+import { CustomFormsModule } from 'ng2-validation'
+import { Ng2CompleterModule } from "ng2-completer";
+import { CalendarModule } from 'angular-calendar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SelectModule } from 'ng2-select-compat';
+
 
 
 
 const appRoutes: Routes = [
-    {path: '', component: LayoutComponent,
-      canActivateChild: [CanActivateViaAuthGuardGuard],
-      children: [
-      {path: '', redirectTo: 'calendar', pathMatch: 'full'},
+  {
+    path: 'u', component:LayoutComponent,
+    canActivateChild: [CanActivateViaAuthGuardGuard],
+    children: [
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
-        {path: 'schedule', component: ScheduleComponent}
-    ]},
-    {path: 'login', component: LoginComponent},
-    {path: '**', component: PageNotFoundComponent},
-    {path: 'error', component: ErrorComponent},
+      {path: 'schedule', component: ScheduleComponent},
+      {path: '404', component: PageNotFoundComponent},
+      {path: '**', redirectTo: '404'}
+    ]
+  },
+  {path: '', redirectTo:'/u', pathMatch:'full'},
+
+  {path: 'login', component: LoginComponent},
+
+  {path: 'error', component: ErrorComponent},
   ];
 
 
@@ -51,14 +62,20 @@ const appRoutes: Routes = [
     CalendarComponent,
     EditComponent,
     ViewComponent,
+
     ScheduleComponent
   ],
   imports: [
     NgbModule.forRoot(),
     RouterModule.forRoot(appRoutes),
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    CustomFormsModule,
     HttpModule,
+    SelectModule,
+    Ng2CompleterModule,
+    CalendarModule.forRoot(),
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule
