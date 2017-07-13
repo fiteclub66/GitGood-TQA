@@ -23,8 +23,8 @@ import {CanActivateViaAuthGuardGuard} from "./guards/can-activate-via-auth-guard
 import { CustomFormsModule } from 'ng2-validation'
 import { Ng2CompleterModule } from "ng2-completer";
 import { CalendarModule } from 'angular-calendar';
-import 'angular-calendar/dist/css/angular-calendar.css'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SelectModule } from 'ng2-select-compat';
 
 
 
@@ -73,6 +73,7 @@ const appRoutes: Routes = [
     FormsModule,
     CustomFormsModule,
     HttpModule,
+    SelectModule,
     Ng2CompleterModule,
     CalendarModule.forRoot(),
     AngularFireModule.initializeApp(firebaseConfig),
