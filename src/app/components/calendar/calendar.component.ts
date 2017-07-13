@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef, ViewEncapsulation} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import * as firebase from 'firebase/app';
 import {AngularFireAuth} from "angularfire2/auth";
@@ -18,9 +18,11 @@ import {
 import {
   CalendarEvent,
   CalendarEventAction,
-  CalendarEventTimesChangedEvent
+  CalendarEventTimesChangedEvent,
+  CalendarMonthViewDay
 } from 'angular-calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import fedHolidays from '@18f/us-federal-holidays'
 
 
 
@@ -45,6 +47,7 @@ const colors: any = {
 @Component({
   selector: 'app-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
@@ -91,6 +94,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
+beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
+  //var holidays = fedHolidays.allForYear(2017);
+  //console.log(body);
+    body.forEach((day) => {
+      //console.log(day.date)
+      if (fedHolidays.isAHoliday(day.date)) {
+         day.cssClass = 'odd-cell';
+      }
+
+      // if (day.date.getDate() % 2 === 1 && day.inMonth) {
+      //   day.cssClass = 'odd-cell';
+      // }
+    });
+  }
 
 
   events: CalendarEvent[] = [{
@@ -119,7 +136,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       beforeStart: true,
       afterEnd: true
     },
-    draggable: true
+    //draggable: true
   }];
 
  activeDayIsOpen: boolean = true;
@@ -169,6 +186,61 @@ export class CalendarComponent implements OnInit, OnDestroy {
       }
     });
     this.refresh.next();
+  }
+
+
+  /**
+  * Select Stuff below
+  **/
+
+  public items:Array<any> = [
+    {
+      id: 1,
+      text: 'My Schedule',
+      children: [
+        {id: 54, text: 'Stephen Strickland'}
+      ]
+    },
+    {
+      id: 2,
+      text: 'My Team',
+      children: [
+        {id: 2, text: 'Joe Smith'},
+        {id: 9, text: 'Juan Tenorio'}
+      ]
+    },
+    {
+      id: 3,
+      text: 'Shared Schedules',
+      children: [
+        {id: 3, text: 'Cameron Fite'},
+        {id: 10, text: 'Brandon Cross'}
+      ]
+    }
+    ];
+  private value:any = {};
+  private _disabledV:string = '0';
+  private disabled:boolean = false;
+ 
+  private get disabledV():string {
+    return this._disabledV;
+  }
+ 
+  private set disabledV(value:string) {
+    this._disabledV = value;
+    this.disabled = this._disabledV === '1';
+  }
+ 
+  public selected(value:any):void {
+    console.log('Selected value is: ', value);
+  }
+ 
+  public removed(value:any):void {
+    console.log('Removed value is: ', value);
+  }
+ 
+  public refreshValue(value:any):void {
+    this.value = value;
   }
 
 

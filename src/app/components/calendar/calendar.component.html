@@ -26,7 +26,13 @@
         
     </div>
     <div class="col">
-    	
+    	<ng-select [allowClear]="true"
+             [items]="items"
+             
+             (data)="refreshValue($event)"
+             (selected)="selected($event)"
+             (removed)="removed($event)"
+             placeholder="No schedule selected"></ng-select>
     </div>
 
 </div>
@@ -96,7 +102,8 @@
     (dayClicked)="dayClicked($event.day)"
     (eventClicked)="handleEvent('Clicked', $event.event)"
     (eventTimesChanged)="eventTimesChanged($event)"
-    [excludeDays]="excludeDays">
+    [excludeDays]="excludeDays"
+    (beforeViewRender)="beforeMonthViewRender($event)">
   </mwl-calendar-month-view>
   <mwl-calendar-week-view
     *ngSwitchCase="'week'"
@@ -115,7 +122,8 @@
     [events]="events"
     [refresh]="refresh"
     (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)">
+    (eventTimesChanged)="eventTimesChanged($event)"
+    [hourSegments]="1">
   </mwl-calendar-day-view>
 </div>
 
