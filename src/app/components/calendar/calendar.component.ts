@@ -155,7 +155,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
    modalData: {
     action: string,
     event: CalendarEvent
-  };  
+  };
 
   addEvent(): void {
     this.events.push({
@@ -174,9 +174,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-
-
-
 
   }
 

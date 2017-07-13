@@ -36,7 +36,7 @@ export class AuthService {
 
     return this.db.list('/events', {
       query: {
-        orderByChild: 'year',
+        orderByChild: 'meetingDate/year',
         equalTo: year
 
       }
@@ -48,7 +48,7 @@ export class AuthService {
     console.log(reservation.startingHour)
     return this.getEventsByDay(reservation).map(_dayList =>
       _dayList.filter(event =>
-      event.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
+      event.meetingDate.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
 
   }
 
@@ -96,7 +96,7 @@ export class AuthService {
 
     return this.getEventsByMonth(reservation).map(_monthList =>
       _monthList.filter(event =>
-      event.day === reservation.day)) as FirebaseListObservable<any>;
+      event.meetingDate.day === reservation.day)) as FirebaseListObservable<any>;
 
   }
 
@@ -104,7 +104,8 @@ export class AuthService {
 
     return this.getEventsByYear(reservation.year).map(_yearList =>
       _yearList.filter(event =>
-      event.month === reservation.month)) as FirebaseListObservable<any>;
+      event.meetingDate.month === reservation.month)
+    ) as FirebaseListObservable<any>;
 
   }
 

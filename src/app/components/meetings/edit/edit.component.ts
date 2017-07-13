@@ -13,13 +13,6 @@ import { CompleterService, CompleterData } from 'ng2-completer';
 export class EditComponent implements OnInit, OnDestroy {
 
   members: Subscription;
-  constructor(private route: ActivatedRoute, public authService: AuthService, private completerService: CompleterService) {
-
-  }
-
-  day: Subscription;
-
-  private users = [{email: 'foo@bar.com', name: 'foo bar'}, {email:'hello@world.com', name:'Hello World'}, {name:'Juan', email:'jtenorio@gmail.com'}, {name:'Stephen Strickland', email:'stephenstrickland@live.com'}];
   private sub: any;
   private id = "0";
   protected dataService: CompleterData;
@@ -27,10 +20,22 @@ export class EditComponent implements OnInit, OnDestroy {
 
 
   public event = {
-    startingHour: 8,
-    endingHour: 9,
+    meetingDate:{
+      startingHour:'',
+      day:'',
+      month:'',
+      year:'',
+      endingHour:'',
+    },
     members: []
+  };
+  constructor(private route: ActivatedRoute, public authService: AuthService, private completerService: CompleterService) {
+
   }
+
+  day: Subscription;
+
+
 
   handleAddMember(obj: any)
   {
@@ -58,7 +63,7 @@ export class EditComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
 
-    this.day = this.authService.getEventsByDay({year:2018, month:2, day:6}).subscribe(x => console.log(x));
+    this.day = this.authService.getEventsByDay({year:2017, month:7, day:6}).subscribe(x => console.log(x));
   }
 
 
