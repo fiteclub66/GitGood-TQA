@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Router, ActivatedRoute } from '@angular/router';
 import {AuthService } from '../../../services/auth.service';
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
