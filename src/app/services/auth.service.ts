@@ -1,5 +1,5 @@
 ///<reference path="../../../node_modules/rxjs/add/operator/mergeMap.d.ts"/>
-import { Injectable } from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
@@ -13,8 +13,12 @@ export class AuthService {
 
   user: any;
 
+
+
+
+
   constructor(public afAuth: AngularFireAuth, public router: Router, public db: AngularFireDatabase) {
-    this.user = afAuth.auth.currentUser;
+    this.user = firebase.auth().currentUser;
   }
 
 
@@ -36,7 +40,7 @@ export class AuthService {
 
     return this.db.list('/events', {
       query: {
-        orderByChild: 'year',
+        orderByChild: 'meetingDate/year',
         equalTo: year
 
       }
@@ -48,7 +52,7 @@ export class AuthService {
     console.log(reservation.startingHour)
     return this.getEventsByDay(reservation).map(_dayList =>
       _dayList.filter(event =>
-      event.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
+      event.meetingDate.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
 
   }
 
@@ -96,7 +100,7 @@ export class AuthService {
 
     return this.getEventsByMonth(reservation).map(_monthList =>
       _monthList.filter(event =>
-      event.day === reservation.day)) as FirebaseListObservable<any>;
+      event.meetingDate.day === reservation.day)) as FirebaseListObservable<any>;
 
   }
 
@@ -104,7 +108,8 @@ export class AuthService {
 
     return this.getEventsByYear(reservation.year).map(_yearList =>
       _yearList.filter(event =>
-      event.month === reservation.month)) as FirebaseListObservable<any>;
+      event.meetingDate.month === reservation.month)
+    ) as FirebaseListObservable<any>;
 
   }
 
@@ -121,12 +126,31 @@ export class AuthService {
   loginEmail(email: string, password: string) {
 
 
+    console.log(email);
     const route = this.router;
     const self = this;
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result) {
+      self.user = result.user;
+      self.getAdminByEmail(result.email).take(1).subscribe(AdminFound => {
+
+        self.getManagerByEmail(result.email).take(1).subscribe(managerFound => {
+
+          if (AdminFound.length === 0 && managerFound.length === 0) {
+            self.db.object('/users/employees/' + result.uid).set({
+              name: result.displayName,
+              email: result.email
+            });
+          }
+
+        });
+
+
+      });
+
+
+      route.navigate(['/a']);
+
       console.log(result);
-      self.db.object('/users/'+result.uid).set({name:result.displayName, email: result.email});
-      route.navigate(['']);
     });
 
   }
@@ -143,10 +167,90 @@ export class AuthService {
     const route = this.router;
     const self = this;
     this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
-      self.db.object('/users/'+result.user.uid).set({name:result.user.displayName, email: result.user.email});
-      route.navigate(['']);
+      self.user = result.user;
+
+      self.getAdminByEmail(self.user.email).take(1).subscribe(AdminFound => {
+
+        self.getManagerByEmail(self.user.email).take(1).subscribe(managerFound => {
+
+        if(AdminFound.length ===  0 && managerFound.length === 0){
+          self.db.object('/users/employees/'+self.user.uid).set({name:self.user.displayName, email: self.user.email});
+        }
+
+        });
+
+
+      });
+
+
+
+
+      route.navigate(['/a']);
+
       console.log(result);
     });
+  }
+
+  public getEEByEmail(email: string): FirebaseListObservable<any>{
+    return this.db.list('/users/employees', {
+      query: {
+        orderByChild: 'email',
+        equalTo: email
+      }
+    });
+  }
+
+  public getManagerByEmail(email: string): FirebaseListObservable<any>{
+
+
+    return this.db.list('/users/managers', {
+
+      query: {
+        orderByChild: 'email',
+        equalTo: email
+      }
+
+    });
+  }
+
+
+  public getAdminByEmail(email: string): FirebaseListObservable<any>{
+
+
+    return this.db.list('/users/admin', {
+
+      query: {
+        orderByChild: 'email',
+        equalTo: email
+      }
+
+    });
+  }
+
+  public makeEEManager(email: string){
+
+    this.getEEByEmail(email).subscribe(employee => {
+      console.log(employee);
+      this.db.object('users/managers/' + employee[0].$key).set(employee[0])
+        .then(() => {
+        this.db.list('users/employees').$ref.ref.child(employee[0].$key).remove();
+        });
+    })
+
+  }
+
+
+
+  public makeEEAdmin(email: string){
+
+    this.getEEByEmail(email).subscribe(employee => {
+      console.log(employee);
+      this.db.object('users/admin/' + employee[0].$key).set(employee[0])
+        .then(() => {
+          this.db.list('users/employees').$ref.ref.child(employee[0].$key).remove();
+        });
+    })
+
   }
 
   logout() {
@@ -165,7 +269,7 @@ export class AuthService {
   }
 
 
-  public createEvent(reservation: any) {
+  public createEvent(reservation: any, room: string) {
 
 
 
@@ -173,9 +277,9 @@ export class AuthService {
     this.checkStartAndEndTime(reservation).take(1).subscribe(dateAvailable => {
 
       if(dateAvailable){
-        this.db.list('/events').push(reservation)
+        this.db.list('/events/'+room).push(reservation)
           .then(resolve => {
-            console.log("Event created in the database successfully")
+            console.log("Event created in the database successfully" + resolve)
           })
           .catch(error => {
             console.log("Error occured\n" + error.message);
@@ -185,15 +289,15 @@ export class AuthService {
 
   }
 
-  public updateEvent(id: string, updatedEvent: any) {
+  public updateEvent(room: string, oldEvent:any, updatedEvent: any) {
 
-    this.getEventByID(id).take(1).subscribe(event => {
+    this.getEventsByHour(oldEvent).take(1).subscribe(event => {
       console.log(event.$key);
 
       if(event.members.includes(this.user.email)) {
-        this.db.object('/events/' + event.$key).update(updatedEvent)
+        this.db.object('/events/' + room + event.$key).update(updatedEvent)
           .then( result => {
-            console.log("Event updated successfully!");
+            console.log("Event updated successfully!" + result);
           })
           .catch(error => {
             console.log("Error: " + error.message);
