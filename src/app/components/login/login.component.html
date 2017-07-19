@@ -13,11 +13,15 @@
           <label   class="label">Password</label>
           <input  #password id="pass" type="password" class="input" data-type="password">
 
-          <button  type="submit" class="button"> Sign In</button>
+          <br>
+          <button   class="button"> Sign In</button>
         </form>
+        <input  type="image" (click)="this.authService.loginGoogle()" src="../../../assets/btn_google_signin_dark_normal_web@2x.png">
         <div class="hr"></div>
+
+
         <div class="foot-lnk">
-          <a href="#forgot">Forgot Password?</a>
+
         </div>
       </div>
       <div class="sign-up-htm">

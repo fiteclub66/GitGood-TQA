@@ -24,25 +24,28 @@ export class AuthService {
 
   createUser(email, password) {
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function (results) {
-      console.log(results)
-    });
+    firebase.auth().createUserWithEmailAndPassword(email, password);
+    this.router.navigate(['/a']);
   }
 
 
   public  getEventsByRoot(): FirebaseListObservable<any> {
 
-    return this.db.list('/events');
+    return this.db.list('/events', {
+      query: {
+        orderByChild: 'meetingDate/year'
+      }
+    });
   }
 
 
-  public getEventsByYear(year: number): FirebaseListObservable<any> {
+  public getEventsByYear(date: Date): FirebaseListObservable<any> {
 
+    console.log(date.getFullYear());
     return this.db.list('/events', {
       query: {
         orderByChild: 'meetingDate/year',
-        equalTo: year
-
+        equalTo: date.getFullYear()
       }
     });
   }
@@ -104,11 +107,11 @@ export class AuthService {
 
   }
 
-  public getEventsByMonth(reservation: any ): FirebaseListObservable<any> {
+  public getEventsByMonth(reservation: Date ): FirebaseListObservable<any> {
 
-    return this.getEventsByYear(reservation.year).map(_yearList =>
+    return this.getEventsByYear(reservation).map(_yearList =>
       _yearList.filter(event =>
-      event.meetingDate.month === reservation.month)
+      event.meetingDate.month === reservation.getMonth())
     ) as FirebaseListObservable<any>;
 
   }
@@ -117,8 +120,17 @@ export class AuthService {
     return this.db.object('/events/'+id);
   }
 
-  public getMembers(): FirebaseListObservable<any>{
-    return this.db.list('/users');
+  public getUsers(): FirebaseListObservable<any>{
+    return this.db.list('/users/employees');
+  }
+
+  public getManager(): FirebaseListObservable<any>{
+    return this.db.list('/users/managers');
+  }
+
+
+  public getAdmin(): FirebaseListObservable<any>{
+    return this.db.list('/users/admin');
   }
 
 
@@ -230,7 +242,7 @@ export class AuthService {
   public makeEEManager(email: string){
 
     this.getEEByEmail(email).subscribe(employee => {
-      console.log(employee);
+      console.log(employee +  "\nLine241");
       this.db.object('users/managers/' + employee[0].$key).set(employee[0])
         .then(() => {
         this.db.list('users/employees').$ref.ref.child(employee[0].$key).remove();
@@ -239,6 +251,18 @@ export class AuthService {
 
   }
 
+
+  public makeManagerUser(email: string){
+
+    this.getManagerByEmail(email).subscribe(employee => {
+      console.log(employee +  "\nLine254");
+      this.db.object('users/employees/' + employee[0].$key).set(employee[0])
+        .then(() => {
+          this.db.list('users/managers').$ref.ref.child(employee[0].$key).remove();
+        });
+    })
+
+  }
 
 
   public makeEEAdmin(email: string){
