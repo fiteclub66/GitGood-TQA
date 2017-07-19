@@ -29,6 +29,7 @@ import { ManagerComponent } from './components/manager/manager.component';
 import {ManagerGuard} from "./guards/manager.guard";
 import { AdminComponentComponent } from './components/admin-component/admin-component.component';
 import {AdminGuard} from "./guards/admin.guard";
+import { AdminConsoleComponent } from './components/admin-console/admin-console.component';
 
 
 
@@ -71,8 +72,8 @@ const appRoutes: Routes = [
     children: [
 
       {path: '', redirectTo: 'calendar', pathMatch:'full'},
-
       {path: 'calendar', component: CalendarComponent},
+      {path: 'console', component: AdminConsoleComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
       {path: 'schedule', component: ScheduleComponent},
@@ -103,6 +104,7 @@ const appRoutes: Routes = [
     ManagerComponent,
     ScheduleComponent,
     AdminComponentComponent,
+    AdminConsoleComponent,
   ],
   imports: [
     NgbModule.forRoot(),

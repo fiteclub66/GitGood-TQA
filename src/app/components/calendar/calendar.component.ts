@@ -21,6 +21,7 @@ import {
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {FirebaseListObservable} from "angularfire2/database";
 
 
 
@@ -51,13 +52,14 @@ const colors: any = {
 export class CalendarComponent implements OnInit, OnDestroy {
 
   _user: Observable<firebase.User>;
-  _root: Subscription;
+  _root: FirebaseListObservable<any>;
   view: string = 'month';
   viewDate: Date = new Date();
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
   constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal) {
     this._user = afAuth.authState;
+    this._root = authService.getEventsByYear(this.viewDate);
 
 
   }
@@ -176,12 +178,32 @@ export class CalendarComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
 
+    // Grabs events from the database and formats it for the calendar
+    this._root.take(1).subscribe(x => {
+      x.forEach(entry => {
+
+        console.log(entry.meetingDate);
+
+        this.events.push({
+          title: entry.title,
+          start:startOfDay( new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.startingHour/100,0,0)),
+          end: endOfDay(new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.endingHour/100,0,0)),
+          color: colors.red,
+          draggable: true,
+          resizable: {
+            beforeStart: true,
+            afterEnd: true
+          }
+        })
+      })
+    });
+
+
 
   }
 
 
   ngOnDestroy(){
-
   }
 
 }

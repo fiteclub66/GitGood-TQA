@@ -50,10 +50,10 @@ export class EditComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
 
-    this.members = this.authService.getMembers().subscribe(memberList =>{
+/*    this.members = this.authService.getMembers().subscribe(memberList =>{
       console.log(memberList);
       this.dataService = this.completerService.local(memberList, 'name', 'name').descriptionField('email');
-    });
+    });*/
 
 
 
