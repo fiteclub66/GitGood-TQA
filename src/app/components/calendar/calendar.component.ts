@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import * as firebase from 'firebase/app';
 import {AngularFireAuth} from "angularfire2/auth";
@@ -18,11 +18,10 @@ import {
 import {
   CalendarEvent,
   CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarMonthViewDay
+  CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import fedHolidays from '@18f/us-federal-holidays'
+import {FirebaseListObservable} from "angularfire2/database";
 
 
 
@@ -47,20 +46,20 @@ const colors: any = {
 @Component({
   selector: 'app-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 
   _user: Observable<firebase.User>;
-  _root: Subscription;
+  _root: FirebaseListObservable<any>;
   view: string = 'month';
   viewDate: Date = new Date();
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
   constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal) {
     this._user = afAuth.authState;
+    this._root = authService.getEventsByYear(this.viewDate);
 
 
   }
@@ -95,20 +94,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
-beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
-  //var holidays = fedHolidays.allForYear(2017);
-  //console.log(body);
-    body.forEach((day) => {
-      //console.log(day.date)
-      if (fedHolidays.isAHoliday(day.date)) {
-         day.cssClass = 'odd-cell';
-      }
-
-      // if (day.date.getDate() % 2 === 1 && day.inMonth) {
-      //   day.cssClass = 'odd-cell';
-      // }
-    });
-  }
 
 
   events: CalendarEvent[] = [{
@@ -137,7 +122,7 @@ beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
       beforeStart: true,
       afterEnd: true
     },
-    //draggable: true
+    draggable: true
   }];
 
  activeDayIsOpen: boolean = true;
@@ -172,7 +157,7 @@ beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
    modalData: {
     action: string,
     event: CalendarEvent
-  };  
+  };
 
   addEvent(): void {
     this.events.push({
@@ -190,63 +175,28 @@ beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
   }
 
 
-  /**
-  * Select Stuff below
-  **/
-
-  public items:Array<any> = [
-    {
-      id: 1,
-      text: 'My Schedule',
-      children: [
-        {id: 54, text: 'Stephen Strickland'}
-      ]
-    },
-    {
-      id: 2,
-      text: 'My Team',
-      children: [
-        {id: 2, text: 'Joe Smith'},
-        {id: 9, text: 'Juan Tenorio'}
-      ]
-    },
-    {
-      id: 3,
-      text: 'Shared Schedules',
-      children: [
-        {id: 3, text: 'Cameron Fite'},
-        {id: 10, text: 'Brandon Cross'}
-      ]
-    }
-    ];
-  private value:any = {};
-  private _disabledV:string = '0';
-  private disabled:boolean = false;
- 
-  private get disabledV():string {
-    return this._disabledV;
-  }
- 
-  private set disabledV(value:string) {
-    this._disabledV = value;
-    this.disabled = this._disabledV === '1';
-  }
- 
-  public selected(value:any):void {
-    console.log('Selected value is: ', value);
-  }
- 
-  public removed(value:any):void {
-    console.log('Removed value is: ', value);
-  }
- 
-  public refreshValue(value:any):void {
-    this.value = value;
-  }
-
-
   ngOnInit() {
 
+
+    // Grabs events from the database and formats it for the calendar
+    this._root.take(1).subscribe(x => {
+      x.forEach(entry => {
+
+        console.log(entry.meetingDate);
+
+        this.events.push({
+          title: entry.title,
+          start:startOfDay( new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.startingHour/100,0,0)),
+          end: endOfDay(new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.endingHour/100,0,0)),
+          color: colors.red,
+          draggable: true,
+          resizable: {
+            beforeStart: true,
+            afterEnd: true
+          }
+        })
+      })
+    });
 
 
 
@@ -254,7 +204,6 @@ beforeMonthViewRender({body}: {body: CalendarMonthViewDay[]}): void {
 
 
   ngOnDestroy(){
-
   }
 
 }

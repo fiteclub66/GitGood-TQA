@@ -12,7 +12,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="event" ngbDatepicker #d="ngbDatepicker">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="event.meetingDate" ngbDatepicker #d="ngbDatepicker">
                             <span class="input-group-addon" (click)="d.toggle()">
 						    	<i class="fa fa-calendar" aria-hidden="true"></i>
 						    </span>
@@ -25,7 +25,7 @@
                 <div class="col-2">
                     <div class="form-group">
                         <div class="input-group">
-                    <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event=={}" [(ngModel)]="event.startingHour">
+                    <input type="number" name="time" class="form-control" [range]="[8,17]" [disabled]="event=={}" [(ngModel)]="event.meetingDate.startingHour">
                     <span class="input-group-addon">
 
                     	{{ event.startingHour < 12 ? "AM" : "PM"}}
@@ -39,9 +39,9 @@
                 <div class="col-2">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="number" name="time" class="form-control" [(ngModel)]="event.endingHour">
+                            <input type="number" name="time" class="form-control" [(ngModel)]="event.meetingDate.endingHour">
                             <span class="input-group-addon">
-                    	{{ event.endingHour < 12 ? "AM" : "PM"}}
+                    	{{ event.meetingDate.endingHour < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
                     </div>

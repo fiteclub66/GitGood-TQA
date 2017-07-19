@@ -25,15 +25,24 @@ import { Ng2CompleterModule } from "ng2-completer";
 import { CalendarModule } from 'angular-calendar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SelectModule } from 'ng2-select-compat';
+import { ManagerComponent } from './components/manager/manager.component';
+import {ManagerGuard} from "./guards/manager.guard";
+import { AdminComponentComponent } from './components/admin-component/admin-component.component';
+import {AdminGuard} from "./guards/admin.guard";
+import { AdminConsoleComponent } from './components/admin-console/admin-console.component';
 
 
 
 
 const appRoutes: Routes = [
+
   {
     path: 'u', component:LayoutComponent,
     canActivateChild: [CanActivateViaAuthGuardGuard],
     children: [
+
+      {path: '', redirectTo: 'calendar', pathMatch:'full'},
+
       {path: 'calendar', component: CalendarComponent},
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
@@ -42,7 +51,37 @@ const appRoutes: Routes = [
       {path: '**', redirectTo: '404'}
     ]
   },
-  {path: '', redirectTo:'/u', pathMatch:'full'},
+
+  {path: 'm', component:ManagerComponent,
+  canActivateChild: [CanActivateViaAuthGuardGuard, ManagerGuard],
+  children: [
+
+  {path: '', redirectTo: 'calendar', pathMatch:'full'},
+
+  {path: 'calendar', component: CalendarComponent},
+  {path: 'meetings/:id/edit', component: EditComponent},
+  {path: 'meetings/:id', component: ViewComponent},
+  {path: 'schedule', component: ScheduleComponent},
+  {path: '404', component: PageNotFoundComponent},
+  {path: '**', redirectTo: '404'}
+]
+},
+
+  {path: 'a', component:AdminComponentComponent,
+    canActivateChild: [CanActivateViaAuthGuardGuard, AdminGuard],
+    children: [
+
+      {path: '', redirectTo: 'calendar', pathMatch:'full'},
+      {path: 'calendar', component: CalendarComponent},
+      {path: 'console', component: AdminConsoleComponent},
+      {path: 'meetings/:id/edit', component: EditComponent},
+      {path: 'meetings/:id', component: ViewComponent},
+      {path: 'schedule', component: ScheduleComponent},
+      {path: '404', component: PageNotFoundComponent},
+      {path: '**', redirectTo: '404'}
+    ]
+  },
+
 
   {path: 'login', component: LoginComponent},
 
@@ -62,8 +101,10 @@ const appRoutes: Routes = [
     CalendarComponent,
     EditComponent,
     ViewComponent,
-
-    ScheduleComponent
+    ManagerComponent,
+    ScheduleComponent,
+    AdminComponentComponent,
+    AdminConsoleComponent,
   ],
   imports: [
     NgbModule.forRoot(),
@@ -80,7 +121,7 @@ const appRoutes: Routes = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, CanActivateViaAuthGuardGuard],
+  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
