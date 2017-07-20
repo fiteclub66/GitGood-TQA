@@ -1,8 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {AuthService } from '../../../services/auth.service';
+import {DateService } from '../../../services/date.service';
+
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-edit',
@@ -28,7 +31,7 @@ export class EditComponent implements OnInit, OnDestroy {
     },
     members: []
   };
-  constructor(private route: ActivatedRoute, public authService: AuthService, private completerService: CompleterService) {
+  constructor(private route: ActivatedRoute, private dateService : DateService, public authService: AuthService, private completerService: CompleterService) {
 
   }
 
@@ -62,7 +65,14 @@ export class EditComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
 
-    this.day = this.authService.getEventsByDay({year:2017, month:7, day:6}).subscribe(x => console.log(x));
+    //this.day = this.authService.getEventsByDay({year:2017, month:7, day:6}).subscribe(x => console.log(x));
+  }
+
+  disabledDays = (date: NgbDateStruct, current: { year: number; month: number; }): boolean => {
+    //console.log(date, current)
+
+    if(date.day == 4) console.log('disabled?',date, new Date(date.year, date.month-1, date.day, 0, 0, 0).toString(), this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0)));
+    return this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0));
   }
 
 
