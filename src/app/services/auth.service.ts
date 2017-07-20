@@ -41,7 +41,6 @@ export class AuthService {
 
   public getEventsByYear(date: Date): FirebaseListObservable<any> {
 
-    console.log(date.getFullYear());
     return this.db.list('/events', {
       query: {
         orderByChild: 'meetingDate/year',
@@ -50,12 +49,12 @@ export class AuthService {
     });
   }
 
-  public getEventsByHour(reservation: any): FirebaseListObservable<any> {
+  public getEventsByHour(reservation: Date): FirebaseListObservable<any> {
 
-    console.log(reservation.startingHour)
+
     return this.getEventsByDay(reservation).map(_dayList =>
       _dayList.filter(event =>
-      event.meetingDate.startingHour === reservation.startingHour)) as FirebaseListObservable<any>;
+      event.meetingDate.startingHour === reservation.getHours())) as FirebaseListObservable<any>;
 
   }
 
@@ -99,11 +98,11 @@ export class AuthService {
     });
   }
 
-  public getEventsByDay(reservation: any ): FirebaseListObservable<any> {
+  public getEventsByDay(reservation: Date ): FirebaseListObservable<any> {
 
     return this.getEventsByMonth(reservation).map(_monthList =>
       _monthList.filter(event =>
-      event.meetingDate.day === reservation.day)) as FirebaseListObservable<any>;
+      event.meetingDate.day === reservation.getDay())) as FirebaseListObservable<any>;
 
   }
 
@@ -133,12 +132,18 @@ export class AuthService {
     return this.db.list('/users/admin');
   }
 
+  public getWorkers(): any{
+
+    return this.db.object('/users');
+  }
+
+
+
+
 
 
   loginEmail(email: string, password: string) {
 
-
-    console.log(email);
     const route = this.router;
     const self = this;
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(function (result) {
@@ -160,9 +165,10 @@ export class AuthService {
       });
 
 
-      route.navigate(['/a']);
+      route.navigate(['/a']).catch(error =>{
+        console.log(error);
+      });
 
-      console.log(result);
     });
 
   }
@@ -194,12 +200,10 @@ export class AuthService {
 
       });
 
+      route.navigate(['/a']).catch(error => {
+        console.log(error);
+      });
 
-
-
-      route.navigate(['/a']);
-
-      console.log(result);
     });
   }
 
@@ -242,7 +246,7 @@ export class AuthService {
   public makeEEManager(email: string){
 
     this.getEEByEmail(email).subscribe(employee => {
-      console.log(employee +  "\nLine241");
+
       this.db.object('users/managers/' + employee[0].$key).set(employee[0])
         .then(() => {
         this.db.list('users/employees').$ref.ref.child(employee[0].$key).remove();
@@ -255,7 +259,7 @@ export class AuthService {
   public makeManagerUser(email: string){
 
     this.getManagerByEmail(email).subscribe(employee => {
-      console.log(employee +  "\nLine254");
+
       this.db.object('users/employees/' + employee[0].$key).set(employee[0])
         .then(() => {
           this.db.list('users/managers').$ref.ref.child(employee[0].$key).remove();
@@ -268,7 +272,7 @@ export class AuthService {
   public makeEEAdmin(email: string){
 
     this.getEEByEmail(email).subscribe(employee => {
-      console.log(employee);
+
       this.db.object('users/admin/' + employee[0].$key).set(employee[0])
         .then(() => {
           this.db.list('users/employees').$ref.ref.child(employee[0].$key).remove();
@@ -316,7 +320,6 @@ export class AuthService {
   public updateEvent(room: string, oldEvent:any, updatedEvent: any) {
 
     this.getEventsByHour(oldEvent).take(1).subscribe(event => {
-      console.log(event.$key);
 
       if(event.members.includes(this.user.email)) {
         this.db.object('/events/' + room + event.$key).update(updatedEvent)

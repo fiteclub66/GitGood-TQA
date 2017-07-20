@@ -30,6 +30,7 @@ import {ManagerGuard} from "./guards/manager.guard";
 import { AdminComponentComponent } from './components/admin-component/admin-component.component';
 import {AdminGuard} from "./guards/admin.guard";
 import { AdminConsoleComponent } from './components/admin-console/admin-console.component';
+import {UserGuard} from "./guards/user.guard";
 
 
 
@@ -38,7 +39,7 @@ const appRoutes: Routes = [
 
   {
     path: 'u', component:LayoutComponent,
-    canActivateChild: [CanActivateViaAuthGuardGuard],
+    canActivateChild: [CanActivateViaAuthGuardGuard, UserGuard],
     children: [
 
       {path: '', redirectTo: 'calendar', pathMatch:'full'},
