@@ -35,12 +35,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   }
 
-  day: Subscription;
 
-
-
-  handleAddMember(obj: any)
-  {
+  handleAddMember(obj: any) {
     console.log(obj);
     this.event.members.push(obj.originalObject);
     this.searchString = '';
@@ -52,19 +48,17 @@ export class EditComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.members = this.authService.getWorkers().subscribe(users => {
+      let mergedUsers = Object.assign({}, users.employees, users.managers, users.admin);
+      let usersArray = Object.keys(mergedUsers).map((k) => mergedUsers[k]);
+      console.log(usersArray);
+      this.dataService = this.completerService.local(usersArray, 'name', 'name').descriptionField('email');
 
-/*    this.members = this.authService.getMembers().subscribe(memberList =>{
-      console.log(memberList);
-      this.dataService = this.completerService.local(memberList, 'name', 'name').descriptionField('email');
-    });*/
-
-
-
+    });
 
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
     });
-
     //this.day = this.authService.getEventsByDay({year:2017, month:7, day:6}).subscribe(x => console.log(x));
   }
 
@@ -73,6 +67,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     if(date.day == 4) console.log('disabled?',date, new Date(date.year, date.month-1, date.day, 0, 0, 0).toString(), this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0)));
     return this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0));
+
   }
 
 
@@ -81,7 +76,6 @@ export class EditComponent implements OnInit, OnDestroy {
 
     this.members.unsubscribe();
     this.sub.unsubscribe();
-    this.day.unsubscribe();
   }
 
 }
