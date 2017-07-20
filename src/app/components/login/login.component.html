@@ -1,37 +1,52 @@
-<div class="container" style="height: 100%;">
-    <div class="row justify-content-center">
-        <div class="col-4">
-            <div class="card" style="margin-top: 15em;">
-                <h3 class="card-header">Login</h3>
+<html>
+<body>
+<div class="login-wrap">
+  <div class="login-html">
+    <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+    <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+    <div class="login-form">
+      <div class="sign-in-htm">
+        <form class="group"  (submit)="this.authService.loginEmail(email.value, password.value)" >
+          <label class="label">Email</label>
+          <input #email  id="user" type="text" class="input">
+
+          <label   class="label">Password</label>
+          <input  #password id="pass" type="password" class="input" data-type="password">
+
+          <br>
+          <button   class="button"> Sign In</button>
+        </form>
+        <input  type="image" (click)="this.authService.loginGoogle()" src="../../../assets/btn_google_signin_dark_normal_web@2x.png">
+        <div class="hr"></div>
 
 
-              <div *ngIf="error" class="alert alert-warning" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span class="sr-only">Error:</span>
-                {{error}}
-              </div>
-              <div class="modal-dialog">
-                <div class="loginmodal-container">
-                  <h1>Login to Your Account</h1><br>
-                  <form class="form-signin" (submit)="(authService.loginEmail(email.value, password.value))">
-                    <label for="email" class="sr-only">Email address</label>
-                    <input #email type="email" id="email" class="form-control" placeholder="Email address">
-                    <label for="password" class="sr-only">Password</label>
-                    <input #password type="password" id="password" class="form-control" placeholder="Password" required="">
-                    <br>
-                    <button class="btn btn-md btn-primary btn-block" type="submit">Sign in</button>
-                  </form>
-                  <hr>
-                  <button class="login loginmodal-submit" (click)="authService.loginGoogle()">Login With Google</button>
-                  <hr>
-                  <hr>
-                  <button class="login loginmodal-submit" (click)="authService.createUser(email.value, password.value)">Register</button>
-                  <hr>
-                </div>
-              </div>
+        <div class="foot-lnk">
 
-
-            </div>
         </div>
+      </div>
+      <div class="sign-up-htm">
+        <div class="group">
+          <label for="user" class="label">Email</label>
+          <input #email2  id="user" type="text" class="input">
+        </div>
+        <div class="group">
+          <label for="pass" class="label">Password</label>
+          <input id="pass" type="password" class="input" data-type="password">
+        </div>
+        <div class="group">
+          <label  for="pass" class="label">Repeat Password</label>
+          <input  #password2 id="pass" type="password" class="input" data-type="password">
+        </div>
+        <div class="group">
+          <input type="submit" class="button" (click)="this.authService.createUser(email2.value, password2.value)"  value="Sign Up">
+        </div>
+        <div class="hr"></div>
+        <div class="foot-lnk">
+          <label for="tab-1">Already Member?</label>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+</body>
+</html>
