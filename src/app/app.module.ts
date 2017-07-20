@@ -15,6 +15,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import {AuthService} from './services/auth.service';
+import {DateService} from './services/date.service';
 import { EditComponent } from './components/meetings/edit/edit.component';
 import { ViewComponent } from './components/meetings/view/view.component';
 import {ScheduleComponent} from './components/schedules/view/schedule.component'
@@ -122,7 +123,7 @@ const appRoutes: Routes = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard],
+  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard, DateService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
