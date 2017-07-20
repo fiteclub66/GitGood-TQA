@@ -12,7 +12,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="event.meetingDate" ngbDatepicker #d="ngbDatepicker">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [markDisabled]="disabledDays" [(ngModel)]="event.meetingDate" ngbDatepicker #d="ngbDatepicker">
                             <span class="input-group-addon" (click)="d.toggle()">
 						    	<i class="fa fa-calendar" aria-hidden="true"></i>
 						    </span>
@@ -56,7 +56,7 @@
             <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Add Members</label>
                 <div class="col-10">
-                    <ng2-completer [(ngModel)]="searchStr" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
+                    <ng2-completer [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
                 </div>
             </div>
 
