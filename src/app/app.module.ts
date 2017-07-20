@@ -123,7 +123,7 @@ const appRoutes: Routes = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard, DateService],
+  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard, DateService, UserGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
