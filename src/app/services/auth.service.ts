@@ -186,11 +186,11 @@ router: Router;
     });
   }
 
-  loginGoogle() {
+  loginGoogle():firebase.Promise<any> {
 
     const route = this.router;
     const self = this;
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
+    return this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
       self.user = result.user;
 
       self.getAdminByEmail(self.user.email).take(1).subscribe(AdminFound => {
