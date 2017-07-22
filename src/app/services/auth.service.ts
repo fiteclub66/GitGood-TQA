@@ -17,7 +17,6 @@ router: Router;
 
 
   constructor(public afAuth: AngularFireAuth, public db: AngularFireDatabase) {
-
     this.user = firebase.auth().currentUser;
   }
 
@@ -64,7 +63,7 @@ router: Router;
 
     console.log(reservation);
 
-    let _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1, reservation.meetingDate.day, reservation.meetingDate.startingHour/100,0,0,0);
+    const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1, reservation.meetingDate.day, reservation.meetingDate.startingHour/100,0,0,0);
 
     console.log(_date);
     return this.getEventsByDay(_date).map(_dayList => {
