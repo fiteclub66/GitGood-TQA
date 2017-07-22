@@ -23,11 +23,11 @@ export class EditComponent implements OnInit, OnDestroy {
 
   public event = {
     meetingDate:{
-      startingHour:'',
+      startingHour:8,
       day:'',
       month:'',
       year:'',
-      endingHour:'',
+      endingHour:9,
     },
     members: []
   };

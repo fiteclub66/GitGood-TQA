@@ -1,6 +1,5 @@
 ///<reference path="../../../node_modules/rxjs/add/operator/mergeMap.d.ts"/>
 import {Injectable, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
@@ -13,13 +12,15 @@ export class AuthService {
 
   user: any;
 
+router: Router;
 
 
 
-
-  constructor(public afAuth: AngularFireAuth, public router: Router, public db: AngularFireDatabase) {
+  constructor(public afAuth: AngularFireAuth, public db: AngularFireDatabase) {
     this.user = firebase.auth().currentUser;
   }
+
+
 
 
   createUser(email, password) {
@@ -39,12 +40,12 @@ export class AuthService {
   }
 
 
-  public getEventsByYear(date: Date): FirebaseListObservable<any> {
+  public getEventsByYear(_date: Date): FirebaseListObservable<any> {
 
     return this.db.list('/events', {
       query: {
         orderByChild: 'meetingDate/year',
-        equalTo: date.getFullYear()
+        equalTo: _date.getFullYear()
       }
     });
   }
@@ -60,8 +61,12 @@ export class AuthService {
 
   private checkStartAndEndTime(reservation: any) {
 
+    console.log(reservation);
 
-    return this.getEventsByDay(reservation).map(_dayList => {
+    const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1, reservation.meetingDate.day, reservation.meetingDate.startingHour/100,0,0,0);
+
+    console.log(_date);
+    return this.getEventsByDay(_date).map(_dayList => {
 
       const endingHourInBetween = _dayList.filter(event =>
       event.endingHour > reservation.endingHour && event.startingHour < reservation.endingHour);
@@ -180,11 +185,11 @@ export class AuthService {
     });
   }
 
-  loginGoogle() {
+  loginGoogle():firebase.Promise<any> {
 
     const route = this.router;
     const self = this;
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
+    return this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider).then(function (result) {
       self.user = result.user;
 
       self.getAdminByEmail(self.user.email).take(1).subscribe(AdminFound => {
@@ -297,7 +302,7 @@ export class AuthService {
   }
 
 
-  public createEvent(reservation: any, room: string) {
+  public createEvent(room: number,reservation: any) {
 
 
 
@@ -310,19 +315,19 @@ export class AuthService {
             console.log("Event created in the database successfully" + resolve)
           })
           .catch(error => {
-            console.log("Error occured\n" + error.message);
+            console.log("Error occurred\n" + error.message);
           })
       }
     });
 
   }
 
-  public updateEvent(room: string, oldEvent:any, updatedEvent: any) {
+  public updateEvent(room: number, oldEvent:any, updatedEvent: any) {
 
     this.getEventsByHour(oldEvent).take(1).subscribe(event => {
 
       if(event.members.includes(this.user.email)) {
-        this.db.object('/events/' + room + event.$key).update(updatedEvent)
+        this.db.object('/events/' + room + "/" + event.$key).update(updatedEvent)
           .then( result => {
             console.log("Event updated successfully!" + result);
           })

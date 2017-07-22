@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {NgModule, Pipe, PipeTransform} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
@@ -7,7 +7,6 @@ import {HttpModule} from '@angular/http';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {AngularFireAuthModule} from 'angularfire2/auth';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
@@ -49,8 +48,9 @@ const appRoutes: Routes = [
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
       {path: 'schedule', component: ScheduleComponent},
+      {path: '**', redirectTo: '404'},
       {path: '404', component: PageNotFoundComponent},
-      {path: '**', redirectTo: '404'}
+
     ]
   },
 
@@ -79,8 +79,8 @@ const appRoutes: Routes = [
       {path: 'meetings/:id/edit', component: EditComponent},
       {path: 'meetings/:id', component: ViewComponent},
       {path: 'schedule', component: ScheduleComponent},
+      {path: '**', redirectTo: '404'},
       {path: '404', component: PageNotFoundComponent},
-      {path: '**', redirectTo: '404'}
     ]
   },
 
@@ -95,7 +95,6 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
     LoginComponent,
     PageNotFoundComponent,
     ErrorComponent,
@@ -123,7 +122,7 @@ const appRoutes: Routes = [
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard, DateService],
+  providers: [AuthService, CanActivateViaAuthGuardGuard, ManagerGuard, AdminGuard, DateService, UserGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
