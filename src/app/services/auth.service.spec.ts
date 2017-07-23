@@ -84,7 +84,6 @@ console.log(userList);
   it('getAdminByEmail() without Email',(done: DoneFn)=> {
 
 
-    service.loginEmail('testingm@test.com', 'password');
     //this returns the actual value
 
     service.getAdminByEmail("").take(1).subscribe(userList =>{
@@ -99,7 +98,6 @@ console.log(userList);
   it('getAdminByEmail() with Email',(done: DoneFn)=> {
 
 
-    service.loginEmail('testa@test.com', 'password');
     //this returns the actual value
 
     service.getAdminByEmail('testa@test.com').take(1).subscribe(adminList =>{
@@ -112,5 +110,96 @@ console.log(userList);
 
 
   })
+
+  it('getEventsByMonth() without valid reservation date',(done: DoneFn)=> {
+
+
+    let reservationDate = new Date();
+
+    service.getEventsByMonth(reservationDate).take(1).subscribe(monthList =>{
+
+
+      expect(monthList.length).toEqual(0);
+      done();
+    });
+
+
+
+
+  })
+
+  it('getEventsByMonth() with valid reservation date',(done: DoneFn)=> {
+
+
+
+
+    service.getEventsByMonth(new Date(2017,6, 1, 0, 0, 0)).take(1).subscribe(monthList =>{
+
+      expect(monthList.length).toEqual(6);
+      done();
+    });
+
+
+  })
+
+  it('getEventsByYear() without valid reservation date',(done: DoneFn)=> {
+
+
+    let reservationDate = new Date();
+
+    service.getEventsByMonth(reservationDate).take(1).subscribe(yearList =>{
+
+      expect(yearList.length).toEqual(0);
+      done();
+    });
+
+
+
+  })
+
+  it('getEventsByYear() with valid reservation date',(done: DoneFn)=> {
+
+
+    let reservationDate = new Date(2017,8, 0, 0, 0, 0);
+
+    service.getEventsByYear(reservationDate).take(1).subscribe(yearList =>{
+
+      expect(yearList.length).toEqual(6);
+      done();
+    });
+
+
+
+  })
+
+  it('getEventsByDay() without valid reservation date',(done: DoneFn)=> {
+
+
+    let reservationDate = new Date();
+
+    service.getEventsByDay(reservationDate).take(1).subscribe(dayList =>{
+
+      expect(dayList.length).toEqual(0);
+      done();
+    });
+
+
+
+  })
+
+  it('getEventsByDay() with valid reservation date',(done: DoneFn)=> {
+
+    service.getEventsByDay(new Date(2017,6, 13, 0, 0, 0)).take(1).subscribe(dayList =>{
+
+      console.log('daylist log' ,dayList);
+      expect(dayList.length).toEqual(1);
+      done();
+    });
+
+
+
+  })
+
+
 
 });
