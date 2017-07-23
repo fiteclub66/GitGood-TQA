@@ -35,7 +35,8 @@ import {UserGuard} from "./guards/user.guard";
 
 
 
-const appRoutes: Routes = [
+export const appRoutes: Routes = [
+
 
   {
     path: 'u', component:LayoutComponent,

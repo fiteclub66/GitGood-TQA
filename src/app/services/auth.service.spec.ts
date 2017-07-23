@@ -1,27 +1,31 @@
-import { TestBed, inject } from '@angular/core/testing';
+
 import { AuthService } from './auth.service';
-import {AngularFireAuth} from "angularfire2/auth";
-import {AngularFireModule, FirebaseApp} from "angularfire2";
-import {firebaseConfig} from "../../environments/environment.prod";
-import {AngularFireDatabase} from "angularfire2/database";
 import * as firebase from 'firebase/app';
+import {DebugElement} from "@angular/core";
+
+
+
 describe('AuthService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [AuthService, AngularFireAuth, AngularFireDatabase],
-      imports:[AngularFireModule.initializeApp(firebaseConfig)]
-    }).compileComponents();
+
+  let service: AuthService;
+
+  beforeEach(async() => {
+
+    service = new AuthService;
+
+
   });
 
 
-  it('isLoggedIn()', inject([AuthService, AngularFireAuth, FirebaseApp, AngularFireDatabase], (service: AuthService) => {
+  it('isLoggedIn()', () => {
+
 
     //this returns the actual value
     expect(service.isLoggedIn()).toBeFalsy();
 
-  }));
+  });
 
-  it('loginGoogle()', inject([AuthService, AngularFireAuth, FirebaseApp, AngularFireDatabase], (service: AuthService) => {
+  it('loginGoogle()', () => {
     // This is for setting the wished return value. This way it does not make actual call to the DB
     spyOn(service, 'loginGoogle').and.returnValue(firebase.Promise);
 
@@ -30,5 +34,44 @@ describe('AuthService', () => {
 
     // Checking if it was called. NOTICE THE MISSING PARENTHESIS
     expect(service.loginGoogle).toHaveBeenCalled();
-  }));
+  });
+
+
+  it('getEEByEmail() with Email',(done: DoneFn)=> {
+
+
+      service.loginEmail("testingm@test.com", "password");
+      //this returns the actual value
+
+      service.getEEByEmail("testingm@test.com").take(1).subscribe(userList =>{
+
+
+        expect(userList.length).toEqual(1);
+        done();
+      });
+
+    });
+
+  it('getEEByEmail() without Email',(done: DoneFn)=> {
+
+
+    service.loginEmail("testingm@test.com", "password");
+    //this returns the actual value
+
+    service.getEEByEmail("").take(1).subscribe(userList =>{
+
+
+      expect(userList.length).toEqual(0);
+      done();
+    });
+
+  });
+
+
+
+
+
+
+
+
 });
