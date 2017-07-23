@@ -126,12 +126,12 @@ export class AuthService {
     return this.db.list('/users/employees');
   }
 
-  public getManager(): FirebaseListObservable<any>{
+  public getManagers(): FirebaseListObservable<any>{
     return this.db.list('/users/managers');
   }
 
 
-  public getAdmin(): FirebaseListObservable<any>{
+  public getAdmins(): FirebaseListObservable<any>{
     return this.db.list('/users/admin');
   }
 
