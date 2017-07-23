@@ -103,17 +103,25 @@ export class AuthService {
 
   public getEventsByDay(reservation: Date ): FirebaseListObservable<any> {
 
-    return this.getEventsByMonth(reservation).map(_monthList =>
-      _monthList.filter(event =>
-      event.meetingDate.day === reservation.getDay())) as FirebaseListObservable<any>;
+    console.log('hey look over here', reservation);
+    return this.getEventsByMonth(reservation).map(_monthList => {
+      console.log('month list log', _monthList);
+      _monthList.filter(event => {
+        console.log('this is event log', event);
+        event.meetingDate.day === reservation.getDay();
+        console.log('res log', reservation);
+      })
+    }) as FirebaseListObservable<any>;
 
   }
 
   public getEventsByMonth(reservation: Date ): FirebaseListObservable<any> {
-
+    console.log('get event by month method:', reservation)
     return this.getEventsByYear(reservation).map(_yearList =>
+
       _yearList.filter(event =>
-      event.meetingDate.month === reservation.getMonth())
+        event.meetingDate.month === reservation.getMonth()
+     )
     ) as FirebaseListObservable<any>;
 
   }
