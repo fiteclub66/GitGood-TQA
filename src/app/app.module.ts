@@ -108,6 +108,7 @@ export const appRoutes: Routes = [
     AdminComponentComponent,
     AdminConsoleComponent,
   ],
+
   imports: [
     NgbModule.forRoot(),
     RouterModule.forRoot(appRoutes),

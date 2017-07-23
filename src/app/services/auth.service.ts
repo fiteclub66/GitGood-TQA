@@ -1,28 +1,20 @@
 ///<reference path="../../../node_modules/rxjs/add/operator/mergeMap.d.ts"/>
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import * as firebase from 'firebase/app';
 import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-import {firebaseConfig} from "../../environments/environment";
 
 @Injectable()
 export class AuthService {
 
   user: any;
-  public router: Router;
-
-  public afAuth: AngularFireAuth;
-  public db: AngularFireDatabase;
 
 
 
-  constructor() {
-    firebase.initializeApp(firebaseConfig);
-    this.afAuth = new AngularFireAuth(firebase.app());
-    this.db = new AngularFireDatabase(firebase.app());
+  constructor(public afAuth: AngularFireAuth,public db: AngularFireDatabase, private router: Router) {
     this.user = firebase.auth().currentUser;
   }
 
