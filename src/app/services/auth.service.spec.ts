@@ -25,6 +25,7 @@ describe('AuthService', () => {
     }).compileComponents();
 
     service = TestBed.get(AuthService);
+    service.loginEmail("testam@test.com", "password");
 
   });
 
@@ -51,7 +52,6 @@ describe('AuthService', () => {
   it('getEEByEmail() with Email',(done: DoneFn)=> {
 
 
-      service.loginEmail("testingm@test.com", "password");
       //this returns the actual value
 
       service.getEEByEmail("testingm@test.com").take(1).subscribe(userList =>{
@@ -66,7 +66,6 @@ describe('AuthService', () => {
   it('getEEByEmail() without Email',(done: DoneFn)=> {
 
 
-    service.loginEmail("testingm@test.com", "password");
     //this returns the actual value
 
     service.getEEByEmail("").take(1).subscribe(userList =>{
@@ -75,6 +74,8 @@ describe('AuthService', () => {
       expect(userList.length).toEqual(0);
       done();
     });
+
+
 
   });
 
