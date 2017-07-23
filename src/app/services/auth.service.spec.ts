@@ -25,7 +25,7 @@ describe('AuthService', () => {
     }).compileComponents();
 
     service = TestBed.get(AuthService);
-    service.loginEmail("testam@test.com", "password");
+    service.loginEmail("testa@test.com", "password");
 
   });
 
@@ -108,6 +108,8 @@ console.log(userList);
       expect(adminList.length).toEqual(1);
       done();
     });
+
+
 
   })
 
