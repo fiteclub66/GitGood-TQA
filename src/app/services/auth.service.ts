@@ -12,11 +12,9 @@ export class AuthService {
 
   user: any;
 
-router: Router;
 
 
-
-  constructor(public afAuth: AngularFireAuth, public db: AngularFireDatabase) {
+  constructor(public afAuth: AngularFireAuth,public db: AngularFireDatabase, private router: Router) {
     this.user = firebase.auth().currentUser;
   }
 

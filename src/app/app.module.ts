@@ -35,7 +35,8 @@ import {UserGuard} from "./guards/user.guard";
 
 
 
-const appRoutes: Routes = [
+export const appRoutes: Routes = [
+
 
   {
     path: 'u', component:LayoutComponent,
@@ -107,6 +108,7 @@ const appRoutes: Routes = [
     AdminComponentComponent,
     AdminConsoleComponent,
   ],
+
   imports: [
     NgbModule.forRoot(),
     RouterModule.forRoot(appRoutes),
