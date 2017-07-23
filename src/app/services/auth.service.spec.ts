@@ -56,7 +56,7 @@ describe('AuthService', () => {
 
       service.getEEByEmail("testingm@test.com").take(1).subscribe(userList =>{
 
-
+console.log(userList);
         expect(userList.length).toEqual(1);
         done();
       });
@@ -81,6 +81,34 @@ describe('AuthService', () => {
 
 
 
+  it('getAdminByEmail() without Email',(done: DoneFn)=> {
 
+
+    service.loginEmail('testingm@test.com', 'password');
+    //this returns the actual value
+
+    service.getAdminByEmail("").take(1).subscribe(userList =>{
+
+
+      expect(userList.length).toEqual(0);
+      done();
+    });
+
+  })
+
+  it('getAdminByEmail() with Email',(done: DoneFn)=> {
+
+
+    service.loginEmail('testa@test.com', 'password');
+    //this returns the actual value
+
+    service.getAdminByEmail('testa@test.com').take(1).subscribe(adminList =>{
+
+
+      expect(adminList.length).toEqual(1);
+      done();
+    });
+
+  })
 
 });

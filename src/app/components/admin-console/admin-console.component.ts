@@ -25,8 +25,8 @@ export class AdminConsoleComponent implements OnInit {
     this.selectedManager = "Managers";
     this.selectedAdmin = "Admins";
     this.users = this.auth.getUsers();
-    this.managers = this.auth.getManager();
-    this.admins = this.auth.getAdmin();
+    this.managers = this.auth.getManagers();
+    this.admins = this.auth.getAdmins();
 
 
 
