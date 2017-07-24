@@ -7,12 +7,13 @@
 <div class="row">
     <div class="col">
         <form>
+
             <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Start Date & Time</label>
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [markDisabled]="disabledDays" [(ngModel)]="event.meetingDate" ngbDatepicker #d="ngbDatepicker">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [markDisabled]="disabledDays" [(ngModel)]="event._meetingDate" ngbDatepicker #d="ngbDatepicker">
                             <span class="input-group-addon" (click)="d.toggle()">
 						    	<i class="fa fa-calendar" aria-hidden="true"></i>
 						    </span>
@@ -25,14 +26,14 @@
                 <div class="col-3">
                     <div class="form-group"  >
                         <div class="input-group">
-                    <input type="number" name="time" class="form-control" #time="ngModel" [range]="[8,event.meetingDate.endingHour-1]" [disabled]="event=={}" [(ngModel)]="event.meetingDate.startingHour">
+                    <input type="number" name="time" class="form-control" #time="ngModel" [range]="[8,event.getEndingHour()-1]" [disabled]="event=={}" [(ngModel)]="event._meetingDate.startingHour">
 
                     <span class="input-group-addon">
 
-                    	{{ event.meetingDate.startingHour < 12 ? "AM" : "PM"}}
+                    	{{ event.getStartingHour() < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
-                    <div class="form-control-feedback"  *ngIf="time.errors?.range">{{(event.meetingDate.startingHour < 8 || event.meetingDate.startingHour > 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
+                    <div class="form-control-feedback"  *ngIf="time.errors?.range">{{(event.getStartingHour()< 8 || event.getStartingHour() > 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
 
                     </div>
 
@@ -45,12 +46,12 @@
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="number" name="endTime" #endTime="ngModel" class="form-control" [range]="[event.meetingDate.startingHour +1 ,17]" [(ngModel)]="event.meetingDate.endingHour">
+                            <input type="number" name="endTime" #endTime="ngModel" class="form-control" [range]="[event.getEndingHour() +1 ,17]" [(ngModel)]="event._meetingDate.endingHour">
                             <span class="input-group-addon">
-                    	{{ event.meetingDate.endingHour < 12 ? "AM" : "PM"}}
+                    	{{ event.getEndingHour() < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
-                        <div class="form-control-feedback"  *ngIf="endTime.errors?.range">{{(event.meetingDate.endingHour < 8 || event.meetingDate.endingHour > 17 )? "End time must during business hours (8AM-5PM)" : "End time must be greater than start time"}} </div>
+                        <div class="form-control-feedback"  *ngIf="endTime.errors?.range">{{(event.getEndingHour() < 8 || event.getEndingHour() > 17 )? "End time must during business hours (8AM-5PM)" : "End time must be greater than start time"}} </div>
                     </div>
                 </div>
             </div>
@@ -70,7 +71,7 @@
 
             <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Members</label>
-                <div class="col-10" *ngIf="event.members.length > 0">
+                <div class="col-10" *ngIf="event.getMembers().length > 0">
                     <table class="table">
                         <thead>
                             <tr>
@@ -80,7 +81,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <ng-template ngFor let-item let-i="index" [ngForOf]="event.members">
+                        <ng-template ngFor let-item let-i="index" [ngForOf]="event.getMembers()">
                             <tr>
 
                                 <td>{{item.name}}</td>

@@ -6,6 +6,7 @@ import {DateService } from '../../../services/date.service';
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {GitEvent} from "../../../GitEvent";
 
 @Component({
   selector: 'app-edit',
@@ -19,18 +20,10 @@ export class EditComponent implements OnInit, OnDestroy {
   private id = "0";
   protected dataService: CompleterData;
   private searchString = '';
+  event:GitEvent;
 
 
-  public event = {
-    meetingDate:{
-      startingHour:8,
-      day:'',
-      month:'',
-      year:'',
-      endingHour:9,
-    },
-    members: []
-  };
+
   constructor(private route: ActivatedRoute, private dateService: DateService, public authService: AuthService, private completerService: CompleterService) {
 
   }
@@ -38,19 +31,23 @@ export class EditComponent implements OnInit, OnDestroy {
 
   handleAddMember(obj: any) {
     console.log(obj);
-    this.event.members.push(obj.originalObject);
+    this.event.addMember(obj.originalObject);
     this.searchString = '';
   }
 
   removeUser(index: number){
-    this.event.members.splice(index, 1);
+    this.event.getMembers().splice(index, 1);
   }
 
   ngOnInit() {
 
+  this.event = new GitEvent();
+
+  console.log(this.event);
+
     this.members = this.authService.getWorkers().subscribe(users => {
-      let mergedUsers = Object.assign({}, users.employees, users.managers, users.admin);
-      let usersArray = Object.keys(mergedUsers).map((k) => mergedUsers[k]);
+      const mergedUsers = Object.assign({}, users.employees, users.managers, users.admin);
+      const usersArray = Object.keys(mergedUsers).map((k) => mergedUsers[k]);
       console.log(usersArray);
       this.dataService = this.completerService.local(usersArray, 'name', 'name').descriptionField('email');
 
@@ -65,10 +62,14 @@ export class EditComponent implements OnInit, OnDestroy {
   disabledDays = (date: NgbDateStruct, current: { year: number; month: number; }): boolean => {
     //console.log(date, current)
 
-    if(date.day == 4) console.log('disabled?',date, new Date(date.year, date.month-1, date.day, 0, 0, 0).toString(), this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0)));
-    return this.dateService.isDateDisabled(new Date(date.year, date.month-1, date.day, 0, 0, 0));
+    if (date.day === 4) {
+      console.log('disabled?', date, new Date(date.year, date.month - 1, date.day, 0, 0, 0).toString(),
+        this.dateService.isDateDisabled(new Date(date.year, date.month - 1, date.day, 0, 0, 0))
+      );
+    }
+    return this.dateService.isDateDisabled(new Date(date.year, date.month - 1, date.day, 0, 0, 0));
 
-  }
+  };
 
 
 
