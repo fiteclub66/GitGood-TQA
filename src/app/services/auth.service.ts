@@ -6,6 +6,7 @@ import * as firebase from 'firebase/app';
 import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
+import {GitEvent} from "../GitEvent";
 @Injectable()
 export class AuthService {
 
@@ -48,23 +49,23 @@ export class AuthService {
     })
   }
 
-  private checkStartAndEndTime(reservation: any, room:number) {
+  private checkStartAndEndTime(reservation: GitEvent, room:number) {
 
     console.log(reservation);
 
-    const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1,
-                            reservation.meetingDate.day, reservation.meetingDate.startingHour/100);
+    const _date = new Date(reservation._meetingDate.year, reservation._meetingDate.month-1,
+                            reservation._meetingDate.day, reservation._meetingDate.startingHour/100);
 
     console.log(_date);
     return this.getEventsByDay(_date,room).then(_dayList => {
 
       const endingHourInBetween = _dayList.filter(event =>
-      event.endingHour > reservation.endingHour && event.startingHour < reservation.endingHour);
+      event.endingHour > reservation.getEndingHour() && event.startingHour < reservation.getEndingHour());
 
       const startingHourInBetweenList = _dayList.filter(event =>
-      event.endingHour > reservation.startingHour && event.startingHour < reservation.startingHour);
+      event.endingHour > reservation.getStartingHour() && event.startingHour < reservation.getStartingHour());
 
-      const startHourList = _dayList.filter(event => event.startHour === reservation.startingHour);
+      const startHourList = _dayList.filter(event => event.startHour === reservation.getStartingHour());
 
       if (endingHourInBetween.length > 0 || startHourList.length > 0 || startingHourInBetweenList.length > 0) {
 
@@ -308,7 +309,7 @@ export class AuthService {
   }
 
 
-  public createEvent(room: number,reservation: any) {
+  public createEvent(room: number,reservation: GitEvent) {
 
 
     this.checkStartAndEndTime(reservation,room).then(dateAvailable => {
