@@ -1,19 +1,20 @@
 
 import { AuthService } from './auth.service';
 import {RouterTestingModule} from "@angular/router/testing";
-import {async, inject, TestBed} from "@angular/core/testing";
+import { inject, TestBed} from "@angular/core/testing";
 import {AngularFireDatabase} from "angularfire2/database";
 import {AngularFireAuth} from "angularfire2/auth";
 import {AngularFireModule, FirebaseApp} from "angularfire2";
 import {firebaseConfig} from "../../environments/environment.prod";
-import {Router} from "@angular/router";
-
-
+import Spy = jasmine.Spy;
+import {take} from "rxjs/operator/take";
 
 describe('AuthService', () => {
 
 
   let service: AuthService;
+
+
 
   beforeEach(() => {
 
@@ -22,20 +23,22 @@ describe('AuthService', () => {
 
       providers:[AuthService, AngularFireAuth, AngularFireDatabase],
       imports:[AngularFireModule.initializeApp(firebaseConfig), RouterTestingModule ]
-    }).compileComponents();
-
+    });
     service = TestBed.get(AuthService);
-    service.loginEmail("testa@test.com", "password");
+    service.afAuth.auth.signInAnonymously().catch(error => {
+      console.log(error);
+    })
 
   });
 
 
-  it('isLoggedIn()', inject([AuthService, AngularFireModule, AngularFireDatabase, AngularFireAuth, FirebaseApp],() => {
+
+  it('isLoggedIn()', () => {
 
     //this returns the actual value
     expect(service.isLoggedIn()).toBeFalsy();
 
-  }));
+  });
 
   it('loginGoogle()', () => {
     // This is for setting the wished return value. This way it does not make actual call to the DB
@@ -51,12 +54,10 @@ describe('AuthService', () => {
 
   it('getEEByEmail() with Email',(done: DoneFn)=> {
 
-
       //this returns the actual value
 
       service.getEEByEmail("testingm@test.com").take(1).subscribe(userList =>{
 
-console.log(userList);
         expect(userList.length).toEqual(1);
         done();
       });
@@ -113,31 +114,25 @@ console.log(userList);
 
   it('getEventsByMonth() without valid reservation date',(done: DoneFn)=> {
 
-
-    let reservationDate = new Date();
-
-    service.getEventsByMonth(reservationDate).take(1).subscribe(monthList =>{
-
-
-      expect(monthList.length).toEqual(0);
+    service.getEventsByMonth(new Date(1,1,1)).then(answer => {
+      expect(answer.length).toBe(0);
       done();
     });
 
 
 
-
-  })
+  });
 
   it('getEventsByMonth() with valid reservation date',(done: DoneFn)=> {
 
 
-
-
-    service.getEventsByMonth(new Date(2017,6, 1, 0, 0, 0)).take(1).subscribe(monthList =>{
-
-      expect(monthList.length).toEqual(6);
+    service.getEventsByMonth(new Date(2017,6,9)).then(answer => {
+      console.log(answer);
+      expect(answer.length).toBe(6);
       done();
     });
+
+
 
 
   })
@@ -145,9 +140,7 @@ console.log(userList);
   it('getEventsByYear() without valid reservation date',(done: DoneFn)=> {
 
 
-    let reservationDate = new Date();
-
-    service.getEventsByMonth(reservationDate).take(1).subscribe(yearList =>{
+    service.getEventsByYear(new Date(0,0,0)).take(1).subscribe(yearList =>{
 
       expect(yearList.length).toEqual(0);
       done();
@@ -160,9 +153,9 @@ console.log(userList);
   it('getEventsByYear() with valid reservation date',(done: DoneFn)=> {
 
 
-    let reservationDate = new Date(2017,8, 0, 0, 0, 0);
 
-    service.getEventsByYear(reservationDate).take(1).subscribe(yearList =>{
+
+    service.getEventsByYear(new Date(2017,6, 1)).take(1).subscribe(yearList =>{
 
       expect(yearList.length).toEqual(6);
       done();
@@ -175,24 +168,22 @@ console.log(userList);
   it('getEventsByDay() without valid reservation date',(done: DoneFn)=> {
 
 
-    let reservationDate = new Date();
 
-    service.getEventsByDay(reservationDate).take(1).subscribe(dayList =>{
+    service.getEventsByDay(new Date(1,1,1)).then(dayList =>{
 
       expect(dayList.length).toEqual(0);
       done();
     });
 
+  });
 
-
-  })
 
   it('getEventsByDay() with valid reservation date',(done: DoneFn)=> {
 
-    service.getEventsByDay(new Date(2017,6, 13, 0, 0, 0)).take(1).subscribe(dayList =>{
 
-      console.log('daylist log' ,dayList);
-      expect(dayList.length).toEqual(1);
+    service.getEventsByDay(new Date(2017,6, 13,1,1,1)).then(dayList =>{
+
+      expect(dayList.length).toEqual(3);
       done();
     });
 
