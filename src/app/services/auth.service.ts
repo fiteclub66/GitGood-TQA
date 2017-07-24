@@ -6,7 +6,6 @@ import * as firebase from 'firebase/app';
 import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-
 @Injectable()
 export class AuthService {
 
@@ -19,8 +18,6 @@ export class AuthService {
   }
 
 
-
-
   createUser(email, password) {
 
     firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -28,33 +25,28 @@ export class AuthService {
   }
 
 
-  public  getEventsByRoot(): FirebaseListObservable<any> {
-
-    return this.db.list('/events', {
-      query: {
-        orderByChild: 'meetingDate/year'
-      }
-    });
-  }
 
 
   public getEventsByYear(_date: Date): FirebaseListObservable<any> {
 
-    return this.db.list('/events', {
-      query: {
-        orderByChild: 'meetingDate/year',
-        equalTo: _date.getFullYear()
-      }
-    });
-  }
+  return this.db.list('/events', {
+    query: {
+      orderByChild: 'meetingDate/year',
+      equalTo: _date.getFullYear()
+    }
+  });
+}
 
-  public getEventsByHour(reservation: Date): FirebaseListObservable<any> {
+  public getEventsByHour(reservation: Date): Promise<any> {
 
 
-    return this.getEventsByDay(reservation).map(_dayList =>
-      _dayList.filter(event =>
-      event.meetingDate.startingHour === reservation.getHours())) as FirebaseListObservable<any>;
+    return new Promise(resolver => {
 
+      this.getEventsByDay(reservation).then(_dayList =>
+        resolver(_dayList.filter(event =>
+          event.meetingDate.startingHour === reservation.getHours()))
+      )
+    })
   }
 
   private checkStartAndEndTime(reservation: any) {
@@ -64,7 +56,7 @@ export class AuthService {
     const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1, reservation.meetingDate.day, reservation.meetingDate.startingHour/100,0,0,0);
 
     console.log(_date);
-    return this.getEventsByDay(_date).map(_dayList => {
+    return this.getEventsByDay(_date).then(_dayList => {
 
       const endingHourInBetween = _dayList.filter(event =>
       event.endingHour > reservation.endingHour && event.startingHour < reservation.endingHour);
@@ -101,30 +93,36 @@ export class AuthService {
     });
   }
 
-  public getEventsByDay(reservation: Date ): FirebaseListObservable<any> {
 
-    console.log('hey look over here', reservation);
-    return this.getEventsByMonth(reservation).map(_monthList => {
-      console.log('month list log', _monthList);
-      _monthList.filter(event => {
-        console.log('this is event log', event);
-        event.meetingDate.day === reservation.getDay();
-        console.log('res log', reservation);
+
+  public getEventsByDay(reservation: Date ): Promise<any> {
+
+    return new Promise( resolver => {
+      this.getEventsByMonth(reservation).then(_monthList => {
+
+        resolver(_monthList.filter(event =>
+          event.meetingDate.day === reservation.getDate()
+          )
+        )
       })
-    }) as FirebaseListObservable<any>;
+    });
 
   }
 
-  public getEventsByMonth(reservation: Date ): FirebaseListObservable<any> {
-    console.log('get event by month method:', reservation)
-    return this.getEventsByYear(reservation).map(_yearList =>
 
-      _yearList.filter(event =>
-        event.meetingDate.month === reservation.getMonth()
-     )
-    ) as FirebaseListObservable<any>;
+  public getEventsByMonth(reservation: Date ): Promise<any> {
 
+    return new Promise(resolve => {
+      this.getEventsByYear(reservation).subscribe(_yearList => {
+        //console.log(_yearList);
+        resolve( _yearList.filter(event =>
+        event.meetingDate.month === reservation.getMonth() + 1));
+        // console.log(event.meetingDate.month === reservation.getMonth() + 1);
+      });
+    });
   }
+
+
 
   public getEventByID(id:string): FirebaseObjectObservable<any>{
     return this.db.object('/events/'+id);
@@ -177,9 +175,11 @@ export class AuthService {
 
 
       route.navigate(['/a']).catch(error =>{
-        console.log(error);
+
       });
 
+    }).catch(error => {
+      console.log("Error login in: ", error);
     });
 
   }
@@ -212,7 +212,7 @@ export class AuthService {
       });
 
       route.navigate(['/a']).catch(error => {
-        console.log(error);
+
       });
 
     });
@@ -313,7 +313,7 @@ export class AuthService {
 
 
 
-    this.checkStartAndEndTime(reservation).take(1).subscribe(dateAvailable => {
+    this.checkStartAndEndTime(reservation).then(dateAvailable => {
 
       if(dateAvailable){
         this.db.list('/events/'+room).push(reservation)
@@ -330,7 +330,7 @@ export class AuthService {
 
   public updateEvent(room: number, oldEvent:any, updatedEvent: any) {
 
-    this.getEventsByHour(oldEvent).take(1).subscribe(event => {
+    this.getEventsByHour(oldEvent).then(event => {
 
       if(event.members.includes(this.user.email)) {
         this.db.object('/events/' + room + "/" + event.$key).update(updatedEvent)
