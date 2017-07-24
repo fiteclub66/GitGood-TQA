@@ -141,7 +141,7 @@ export class AuthService {
     return this.db.list('/users/admin');
   }
 
-  public getWorkers(): any{
+  public getWorkers(): FirebaseObjectObservable<any>{
 
     return this.db.object('/users');
   }
@@ -309,8 +309,6 @@ export class AuthService {
 
 
   public createEvent(room: number,reservation: any) {
-
-
 
 
     this.checkStartAndEndTime(reservation,room).then(dateAvailable => {

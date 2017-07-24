@@ -91,6 +91,7 @@
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
         </form>
@@ -100,7 +101,7 @@
 </div>
 <div class="row">
 	<div class="col">
-		<button (click)="this.authService.createEvent(this.event,1)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+		<button (click)="this.authService.createEvent(1,this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
 	</div>
 
 </div>
