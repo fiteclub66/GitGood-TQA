@@ -31,7 +31,7 @@ export class EditComponent implements OnInit, OnDestroy {
     },
     members: []
   };
-  constructor(private route: ActivatedRoute, private dateService : DateService, public authService: AuthService, private completerService: CompleterService) {
+  constructor(private route: ActivatedRoute, private dateService: DateService, public authService: AuthService, private completerService: CompleterService) {
 
   }
 

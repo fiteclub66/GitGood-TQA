@@ -27,9 +27,8 @@ export class AuthService {
 
 
 
-  public getEventsByYear(_date: Date): FirebaseListObservable<any> {
-
-  return this.db.list('/events', {
+  public getEventsByYear(_date: Date, room:number): FirebaseListObservable<any> {
+  return this.db.list('/events/'+room, {
     query: {
       orderByChild: 'meetingDate/year',
       equalTo: _date.getFullYear()
@@ -37,26 +36,27 @@ export class AuthService {
   });
 }
 
-  public getEventsByHour(reservation: Date): Promise<any> {
+  public getEventsByHour(reservation: Date, room:number): Promise<any> {
 
 
     return new Promise(resolver => {
 
-      this.getEventsByDay(reservation).then(_dayList =>
+      this.getEventsByDay(reservation,room).then(_dayList =>
         resolver(_dayList.filter(event =>
           event.meetingDate.startingHour === reservation.getHours()))
       )
     })
   }
 
-  private checkStartAndEndTime(reservation: any) {
+  private checkStartAndEndTime(reservation: any, room:number) {
 
     console.log(reservation);
 
-    const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1, reservation.meetingDate.day, reservation.meetingDate.startingHour/100,0,0,0);
+    const _date = new Date(reservation.meetingDate.year, reservation.meetingDate.month-1,
+                            reservation.meetingDate.day, reservation.meetingDate.startingHour/100);
 
     console.log(_date);
-    return this.getEventsByDay(_date).then(_dayList => {
+    return this.getEventsByDay(_date,room).then(_dayList => {
 
       const endingHourInBetween = _dayList.filter(event =>
       event.endingHour > reservation.endingHour && event.startingHour < reservation.endingHour);
@@ -95,10 +95,10 @@ export class AuthService {
 
 
 
-  public getEventsByDay(reservation: Date ): Promise<any> {
+  public getEventsByDay(reservation: Date, room:number ): Promise<any> {
 
     return new Promise( resolver => {
-      this.getEventsByMonth(reservation).then(_monthList => {
+      this.getEventsByMonth(reservation,room).then(_monthList => {
 
         resolver(_monthList.filter(event =>
           event.meetingDate.day === reservation.getDate()
@@ -110,10 +110,10 @@ export class AuthService {
   }
 
 
-  public getEventsByMonth(reservation: Date ): Promise<any> {
+  public getEventsByMonth(reservation: Date, room:number ): Promise<any> {
 
     return new Promise(resolve => {
-      this.getEventsByYear(reservation).subscribe(_yearList => {
+      this.getEventsByYear(reservation,room).subscribe(_yearList => {
         //console.log(_yearList);
         resolve( _yearList.filter(event =>
         event.meetingDate.month === reservation.getMonth() + 1));
@@ -313,7 +313,7 @@ export class AuthService {
 
 
 
-    this.checkStartAndEndTime(reservation).then(dateAvailable => {
+    this.checkStartAndEndTime(reservation,room).then(dateAvailable => {
 
       if(dateAvailable){
         this.db.list('/events/'+room).push(reservation)
@@ -330,7 +330,7 @@ export class AuthService {
 
   public updateEvent(room: number, oldEvent:any, updatedEvent: any) {
 
-    this.getEventsByHour(oldEvent).then(event => {
+    this.getEventsByHour(oldEvent,room).then(event => {
 
       if(event.members.includes(this.user.email)) {
         this.db.object('/events/' + room + "/" + event.$key).update(updatedEvent)
