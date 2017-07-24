@@ -7,7 +7,6 @@ import {AngularFireAuth} from "angularfire2/auth";
 import {AngularFireModule, FirebaseApp} from "angularfire2";
 import {firebaseConfig} from "../../environments/environment.prod";
 import Spy = jasmine.Spy;
-import {take} from "rxjs/operator/take";
 
 describe('AuthService', () => {
 
@@ -114,7 +113,7 @@ describe('AuthService', () => {
 
   it('getEventsByMonth() without valid reservation date',(done: DoneFn)=> {
 
-    service.getEventsByMonth(new Date(1,1,1)).then(answer => {
+    service.getEventsByMonth(new Date(1,1,1),1).then(answer => {
       expect(answer.length).toBe(0);
       done();
     });
@@ -126,7 +125,7 @@ describe('AuthService', () => {
   it('getEventsByMonth() with valid reservation date',(done: DoneFn)=> {
 
 
-    service.getEventsByMonth(new Date(2017,6,9)).then(answer => {
+    service.getEventsByMonth(new Date(2017,6,9),1).then(answer => {
       console.log(answer);
       expect(answer.length).toBe(6);
       done();
@@ -140,7 +139,7 @@ describe('AuthService', () => {
   it('getEventsByYear() without valid reservation date',(done: DoneFn)=> {
 
 
-    service.getEventsByYear(new Date(0,0,0)).take(1).subscribe(yearList =>{
+    service.getEventsByYear(new Date(0,0,0),0).take(1).subscribe(yearList =>{
 
       expect(yearList.length).toEqual(0);
       done();
@@ -155,7 +154,7 @@ describe('AuthService', () => {
 
 
 
-    service.getEventsByYear(new Date(2017,6, 1)).take(1).subscribe(yearList =>{
+    service.getEventsByYear(new Date(2017,6, 1),1).take(1).subscribe(yearList =>{
 
       expect(yearList.length).toEqual(6);
       done();
@@ -169,7 +168,7 @@ describe('AuthService', () => {
 
 
 
-    service.getEventsByDay(new Date(1,1,1)).then(dayList =>{
+    service.getEventsByDay(new Date(1,1,1),1).then(dayList =>{
 
       expect(dayList.length).toEqual(0);
       done();
@@ -181,7 +180,7 @@ describe('AuthService', () => {
   it('getEventsByDay() with valid reservation date',(done: DoneFn)=> {
 
 
-    service.getEventsByDay(new Date(2017,6, 13,1,1,1)).then(dayList =>{
+    service.getEventsByDay(new Date(2017,6, 13,1,1,1),1).then(dayList =>{
 
       expect(dayList.length).toEqual(3);
       done();

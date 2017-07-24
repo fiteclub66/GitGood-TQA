@@ -26,16 +26,16 @@
                     <div class="form-group"  >
                         <div class="input-group">
                     <input type="number" name="time" class="form-control" #time="ngModel" [range]="[8,event.meetingDate.endingHour-1]" [disabled]="event=={}" [(ngModel)]="event.meetingDate.startingHour">
-                    
+
                     <span class="input-group-addon">
 
                     	{{ event.meetingDate.startingHour < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
                     <div class="form-control-feedback"  *ngIf="time.errors?.range">{{(event.meetingDate.startingHour < 8 || event.meetingDate.startingHour > 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
-                
+
                     </div>
-                    
+
                 </div>
             </div>
             <div class="row"> <p *ngIf="time.errors?.range"></p>  </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-             
+
             <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Description</label>
                 <div class="col-10">
@@ -100,7 +100,7 @@
 </div>
 <div class="row">
 	<div class="col">
-		<button (click)="this.authService.createEvent(this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+		<button (click)="this.authService.createEvent(this.event,1)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
 	</div>
 
 </div>
