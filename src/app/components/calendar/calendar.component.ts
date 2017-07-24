@@ -54,16 +54,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
   _user: Observable<firebase.User>;
   _root: FirebaseListObservable<any>;
   view: string = 'month';
+  refresh: Subject<any> = new Subject();
   viewDate: Date = new Date();
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
   constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal) {
     this._user = afAuth.authState;
-    this._root = authService.getEventsByYear(this.viewDate);
 
+    this._root = authService.getEventsByYear(this.viewDate,1);
 
   }
-  refresh: Subject<any> = new Subject();
+
 
 
   actions: CalendarEventAction[] = [{
