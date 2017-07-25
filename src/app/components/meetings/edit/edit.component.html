@@ -7,10 +7,20 @@
 <div class="row">
     <div class="col">
         <form novalidate #meetingForm="ngForm">
-        <div class="form-group row">
+            <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Title</label>
                 <div class="col-3">
-                    <input type="text" [(ngModel)]="event.title" name="title"  [ngModelOptions]="{standalone: true}"class="form-control" id="exampleTextarea" rows="3" [required]="true">
+                    <input type="text" [(ngModel)]="event.title" name="title" [ngModelOptions]="{standalone: true}" class="form-control" id="exampleTextarea" rows="3" [required]="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="room" class="col-2 col-form-label">Conference Room</label>
+                <div class="col-3">
+                    <select [(ngModel)]="event.room" class="custom-select">
+                        <ng-template ngFor let-item [ngForOf]="rooms">
+                            <option [value]="item.number">{{item.name}}</option>
+                        </ng-template>
+                    </select>
                 </div>
             </div>
             <div class="form-group row">
@@ -43,7 +53,6 @@
                 </div>
             </div>
             <div class="row">
-
                 <p *ngIf="time.errors?.range"></p>
             </div>
             <div class="form-group row" [ngClass]="{'has-danger': endTime.errors?.range}">
@@ -62,9 +71,9 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="example-search-input"  class="col-2 col-form-label">Description</label>
+                <label for="example-search-input" class="col-2 col-form-label">Description</label>
                 <div class="col-10">
-                    <textarea class="form-control" [(ngModel)]="event.description"  [ngModelOptions]="{standalone: true}" id="exampleTextarea" rows="3"></textarea>
+                    <textarea class="form-control" [(ngModel)]="event.description" [ngModelOptions]="{standalone: true}" id="exampleTextarea" rows="3"></textarea>
                 </div>
             </div>
             <div class="form-group row">

@@ -15,6 +15,7 @@ export class GitEvent {
   private members: Array<Member>;
   public meetingDate: any;
   public $key:string;
+  public room : number;
 
   constructor(){
     this.setEvent('','',[]);
@@ -33,6 +34,7 @@ export class GitEvent {
       m.name = member.name;
       return m;
     });
+    e.room = obj.room;
 
     return e;
 

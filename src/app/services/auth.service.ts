@@ -48,10 +48,11 @@ export class AuthService {
     return new Promise( resolve => {
       this.db.list('/events').subscribe(roomList =>{
         let eventsList =[];
-        roomList.forEach(room=>{
+        roomList.forEach((room, index)=>{
+          console.log("room",room);
           for(let event in room){
             if(room[event].meetingDate.year === _date.getFullYear()){
-              eventsList.push(room[event]);
+              eventsList.push({...room[event]});
             }
           }
         });
