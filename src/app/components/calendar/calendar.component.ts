@@ -18,6 +18,7 @@ import {
 import {
   CalendarEvent,
   CalendarEventAction,
+  CalendarMonthViewDay,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,6 +26,8 @@ import {FirebaseListObservable} from "angularfire2/database";
 import {EmailService} from "../../services/email.service";
 import {HttpClient} from "selenium-webdriver/http";
 import {Http, HttpModule} from "@angular/http";
+import {GitEvent} from "../../models/GitEvent";
+
 
 
 
@@ -100,35 +103,42 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
 
-
-  events: CalendarEvent[] = [{
-    start: subDays(startOfDay(new Date()), 1),
-    end: addDays(new Date(), 1),
-    title: 'A 3 day event',
-    color: colors.red,
-    actions: this.actions
-  }, {
-    start: startOfDay(new Date()),
-    title: 'An event with no end date',
-    color: colors.yellow,
-    actions: this.actions
-  }, {
-    start: subDays(endOfMonth(new Date()), 3),
-    end: addDays(endOfMonth(new Date()), 3),
-    title: 'A long event that spans 2 months',
-    color: colors.blue
-  }, {
-    start: addHours(startOfDay(new Date()), 2),
-    end: new Date(),
-    title: 'A draggable and resizable event',
-    color: colors.yellow,
-    actions: this.actions,
-    resizable: {
-      beforeStart: true,
-      afterEnd: true
-    },
-    draggable: true
-  }];
+    events: CalendarEvent[] = [];
+  // events: Array<CalendarEvent<{gitEvent: GitEvent}>> = new Array<CalendarEvent<{gitEvent: GitEvent}>>({
+  //   start: subDays(startOfDay(new Date()), 1),
+  //   end: addDays(new Date(), 1),
+  //   title: 'A 3 day event',
+  //   color: colors.red,
+  //   actions: this.actions
+  // });
+  //  = [{
+  //   start: subDays(startOfDay(new Date()), 1),
+  //   end: addDays(new Date(), 1),
+  //   title: 'A 3 day event',
+  //   color: colors.red,
+  //   actions: this.actions
+  // }, {
+  //   start: startOfDay(new Date()),
+  //   title: 'An event with no end date',
+  //   color: colors.yellow,
+  //   actions: this.actions
+  // }, {
+  //   start: subDays(endOfMonth(new Date()), 3),
+  //   end: addDays(endOfMonth(new Date()), 3),
+  //   title: 'A long event that spans 2 months',
+  //   color: colors.blue
+  // }, {
+  //   start: addHours(startOfDay(new Date()), 2),
+  //   end: new Date(),
+  //   title: 'A draggable and resizable event',
+  //   color: colors.yellow,
+  //   actions: this.actions,
+  //   resizable: {
+  //     beforeStart: true,
+  //     afterEnd: true
+  //   },
+  //   draggable: true
+  // }];
 
  activeDayIsOpen: boolean = true;
 
@@ -186,23 +196,44 @@ export class CalendarComponent implements OnInit, OnDestroy {
       x.forEach(entry => {
 
         console.log(entry.meetingDate);
-
-        this.events.push({
-          title: entry.title,
-          start:startOfDay( new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.startingHour/100,0,0)),
-          end: endOfDay(new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.endingHour/100,0,0)),
-          color: colors.red,
-          draggable: true,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true
-          }
-        })
+        let event = GitEvent.fromData(entry);
+         this.events.push(
+         {
+           title: event.title,
+           start: event.getStartingDate(),
+           end: event.getEndingDate(),
+           color: colors.blue,
+           meta:{
+             gitEvent: event
+           }
+         });
+         this.refresh.next();
+        // this.events.push({
+        //   title: entry.title,
+        //   start:startOfDay( new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.startingHour/100,0,0)),
+        //   end: endOfDay(new Date(entry.meetingDate.year, entry.meetingDate.month-1, entry.meetingDate.day, entry.meetingDate.endingHour/100,0,0)),
+        //   color: colors.red,
+        //   draggable: true,
+        //   resizable: {
+        //     beforeStart: true,
+        //     afterEnd: true
+        //   }
+        // })
       })
+
+
     });
 
 
 
+  }
+
+  beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+    // body.forEach(day => {
+    //   day.badgeTotal = day.events.filter(
+    //     event => event.meta.incrementsBadgeTotal
+    //   ).length;
+    // });
   }
 
 
