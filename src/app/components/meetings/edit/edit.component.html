@@ -7,16 +7,15 @@
 <div class="row">
     <div class="col">
         <form>
-
             <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Start Date & Time</label>
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [markDisabled]="disabledDays" [(ngModel)]="event.meetingDate" ngbDatepicker #d="ngbDatepicker">
+                            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [markDisabled]="disabledDays" [ngModel]="event.meetingDate" (ngModelChange)="event.updateMeetingDateByStruct($event)" ngbDatepicker #d="ngbDatepicker">
                             <span class="input-group-addon" (click)="d.toggle()">
-						    	<i class="fa fa-calendar" aria-hidden="true"></i>
-						    </span>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -24,38 +23,37 @@
             <div class="form-group row" [ngClass]="{'has-danger': time.errors?.range}">
                 <label for="example-text-input" class="col-2 col-form-label">Start Time</label>
                 <div class="col-3">
-                    <div class="form-group"  >
+                    <div class="form-group">
                         <div class="input-group">
-                    <input type="number" name="time" class="form-control" #time="ngModel" [range]="[8,event.getEndingHour()-1]" [disabled]="event=={}" [(ngModel)]="event.meetingDate.startingHour">
+                            <input type="number" name="time" class="form-control" #time="ngModel" [range]="[8,event.getEndingHour()-1]" [disabled]="event=={}" [(ngModel)]="event.meetingDate.startingHour">
+                            <span class="input-group-addon">
 
-                    <span class="input-group-addon">
-
-                    	{{ event.getStartingHour() < 12 ? "AM" : "PM"}}
+                        {{ event.getStartingHour() < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
-                    <div class="form-control-feedback"  *ngIf="time.errors?.range">{{(event.getStartingHour()< 8 || event.getStartingHour() > 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
-
+                        <div class="form-control-feedback" *ngIf="time.errors?.range">{{(event.getStartingHour()
+                            < 8 || event.getStartingHour()> 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
                     </div>
-
                 </div>
             </div>
-            <div class="row"> <p *ngIf="time.errors?.range"></p>  </div>
-
-            <div class="form-group row" [ngClass]="{'has-danger': endTime.errors?.range}" >
+            <div class="row">
+                <p *ngIf="time.errors?.range"></p>
+            </div>
+            <div class="form-group row" [ngClass]="{'has-danger': endTime.errors?.range}">
                 <label for="example-text-input" class="col-2 col-form-label">End Time</label>
                 <div class="col-3">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="number" name="endTime" #endTime="ngModel" class="form-control" [range]="[event.getEndingHour() +1 ,17]" [(ngModel)]="event.meetingDate.endingHour">
+                            <input type="number" name="endTime" #endTime="ngModel" class="form-control" [range]="[event.getStartingHour() +1 ,17]" [(ngModel)]="event.meetingDate.endingHour">
                             <span class="input-group-addon">
-                    	{{ event.getEndingHour() < 12 ? "AM" : "PM"}}
+                        {{ event.getEndingHour() < 12 ? "AM" : "PM"}}
                     </span>
                         </div>
-                        <div class="form-control-feedback"  *ngIf="endTime.errors?.range">{{(event.getEndingHour() < 8 || event.getEndingHour() > 17 )? "End time must during business hours (8AM-5PM)" : "End time must be greater than start time"}} </div>
+                        <div class="form-control-feedback" *ngIf="endTime.errors?.range">{{(event.getEndingHour()
+                            < 8 || event.getEndingHour()> 17 )? "End time must during business hours (8AM-5PM)" : "End time must be greater than start time"}} </div>
                     </div>
                 </div>
             </div>
-
             <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Description</label>
                 <div class="col-10">
@@ -63,46 +61,52 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="example-email-input" class="col-2 col-form-label">Add Members</label>
-                <div class="col-10">
-                    <ng2-completer [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}" [clearSelected]="true" (selected)="handleAddMember($event)" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
+                <div class="col-10 offset-md-2">
+                    <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+                        <ngb-panel title="Members ({{event.getMembers().length}}/10)">
+                            <ng-template ngbPanelContent>
+                                <div class="row" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <ng2-completer [range]="[3,10]" [disabled]="event.getMembers().length == 10" [(ngModel)]="searchStr" [ngModelOptions]="{standalone: true}" [clearSelected]="true" (selected)="handleAddMember($event)" placeholder="Search Members to add" inputClass="form-control" [datasource]="dataService" [minSearchLength]="0"></ng2-completer>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" *ngIf="event.getMembers().length > 0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-template ngFor let-item let-i="index" [ngForOf]="event.getMembers()">
+                                                    <tr>
+                                                        <td>{{item.name}}</td>
+                                                        <td>{{item.email}}</td>
+                                                        <td>
+                                                            <button type="button" (click)="removeUser(i)" class="btn btn-danger">Remove</button>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col align-self-center" *ngIf="event.getMembers().length == 0">
+                                        <p>No Members Added</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-panel>
+                    </ngb-accordion>
                 </div>
             </div>
-
-            <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">Members</label>
-                <div class="col-10" *ngIf="event.getMembers().length > 0">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <ng-template ngFor let-item let-i="index" [ngForOf]="event.getMembers()">
-                            <tr>
-
-                                <td>{{item.name}}</td>
-                                <td>{{item.email}}</td>
-                                <td><button type="button" (click)="removeUser(i)" class="btn btn-danger">Remove</button></td>
-                            </tr>
-                        </ng-template>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
         </form>
-
-
     </div>
 </div>
 <div class="row">
-	<div class="col">
-		<button (click)="this.authService.createEvent(1,this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
-	</div>
-
+    <div class="col">
+        <button (click)="this.authService.createEvent(1,this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+    </div>
 </div>
