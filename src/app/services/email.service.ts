@@ -53,7 +53,7 @@ export class EmailService {
       <tr> \
         <td align="center"> \
     <p style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:22px;"> \
-      You have been invited to attend a meeting by Cameron Fite<br> \
+      You have been invited to attend a meeting by Juan Tenorio Arzola<br> \
     </p> \
     </td> \
     </tr> \
