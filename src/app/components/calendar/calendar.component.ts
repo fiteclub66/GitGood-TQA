@@ -181,10 +181,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-
-    const  Email = new EmailService(this.http);
-    Email.sendInvitation();
-
     // Grabs events from the database and formats it for the calendar
     this._root.take(1).subscribe(x => {
       x.forEach(entry => {
