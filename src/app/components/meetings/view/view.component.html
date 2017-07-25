@@ -5,11 +5,27 @@
     </div>
 </div>
 <div class="row">
+  <div class="col-2">
+    <p>Title: </p>
+  </div>
+  <div class="col">
+    <p>	{{meeting.title}}</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-2">
+    <p>Description: </p>
+  </div>
+  <div class="col">
+    <p>	{{meeting.description}}</p>
+  </div>
+</div>
+<div class="row">
 	<div class="col-2">
 		<p>Meeting Time: </p>
 	</div>
 	<div class="col">
-		<p>	{{meeting.year}}/{{meeting.month}}/{{meeting.day}} {{formatTime(meeting.startingHour)}} - {{formatTime(meeting.endingHour)}}</p>
+		<p>	{{meeting.meetingDate.year}}/{{meeting.meetingDate.month}}/{{meeting.meetingDate.day}} {{formatTime(meeting.meetingDate.startingHour)}} - {{formatTime(meeting.meetingDate.endingHour)}}</p>
 	</div>
 </div>
 <div class="row">
@@ -19,8 +35,8 @@
                 <ng-template ngbPanelContent>
                 	<ul>
                    <ng-template ngFor let-item [ngForOf]="meeting.members">
-                   	<li>{{item}}</li>
-
+                   	<li>{{item.name}}</li>
+                     {{item.email}}
                    </ng-template>
                    </ul>
                 </ng-template>
