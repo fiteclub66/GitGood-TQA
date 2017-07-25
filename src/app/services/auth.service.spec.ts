@@ -29,7 +29,6 @@ describe('AuthService', () => {
 
   });
 
-
   it('isLoggedIn()', () => {
 
     //this returns the actual value
@@ -241,10 +240,11 @@ describe('AuthService', () => {
 
   it('getWorkers()', (done: DoneFn) => {
 
-    service.getWorkers().take(1).subscribe(workerObj => {
-      expect(Object.keys(workerObj.length)).toBeGreaterThan(0);
+    service.getWorkers().then(workerObj => {
+    //  console.log('worker object', workerObj);
+      expect(Object.keys(workerObj).length).toBeGreaterThan(0);
       done();
-    });
+    }).catch(error => console.log(error));
 
   });
 

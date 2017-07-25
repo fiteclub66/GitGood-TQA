@@ -144,9 +144,16 @@ export class AuthService {
     return this.db.list('/users/admin');
   }
 
-  public getWorkers(): FirebaseObjectObservable<any>{
+  public getWorkers(): Promise<any>{
 
-    return this.db.object('/users');
+    return new Promise((resolve, reject) =>{
+      this.db.object('/users').subscribe(workerList  => {
+    //    console.log('worker list', workerList);
+      resolve(workerList);
+      }, error=> {
+        console.log('error was thrown', error);
+      });
+      })
   }
 
 
