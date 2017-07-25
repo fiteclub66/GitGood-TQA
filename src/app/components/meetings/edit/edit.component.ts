@@ -6,7 +6,7 @@ import {DateService } from '../../../services/date.service';
 import {Subscription} from "rxjs/Subscription";
 import { CompleterService, CompleterData } from 'ng2-completer';
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-import {GitEvent} from "../../../GitEvent";
+import {GitEvent} from "../../../models/GitEvent";
 
 @Component({
   selector: 'app-edit',
