@@ -7,6 +7,7 @@ import {AngularFireAuth} from "angularfire2/auth";
 import {AngularFireModule, FirebaseApp} from "angularfire2";
 import {firebaseConfig} from "../../environments/environment.prod";
 import Spy = jasmine.Spy;
+import {GitEvent} from "../GitEvent";
 
 describe('AuthService', () => {
 
@@ -28,7 +29,6 @@ describe('AuthService', () => {
     })
 
   });
-
 
   it('isLoggedIn()', () => {
 
@@ -150,7 +150,7 @@ describe('AuthService', () => {
 
     service.getEventsByMonth(new Date(2017, 6, 9), 1).then(answer => {
       console.log(answer);
-      expect(answer.length).toBe(1);
+      expect(answer.length).toBe(9);
       done();
     })
 
@@ -173,7 +173,7 @@ describe('AuthService', () => {
 
     service.getEventsByYear(new Date(2017, 6, 1), 1).take(1).subscribe(yearList => {
 
-      expect(yearList.length).toEqual(6);
+      expect(yearList.length).toEqual(10);
       done();
     })
 
@@ -195,7 +195,7 @@ describe('AuthService', () => {
 
     service.getEventsByDay(new Date(2017, 6, 13, 1, 1, 1), 1).then(dayList => {
 
-      expect(dayList.length).toEqual(3);
+      expect(dayList.length).toEqual(2);
       done();
     })
 
@@ -224,16 +224,17 @@ describe('AuthService', () => {
   });
   it('getEventbyID() without valid ID', (done: DoneFn) => {
 
-    service.getEventByID("").take(1).subscribe(eventList => {
-      expect(eventList.length).toBe(0);
+    service.getEventByID("ggggggggggggggggg").take(1).subscribe(thisEvent => {
+      expect(thisEvent.$value).toBeNull();
       done();
     })
 
   });
   it('getEventbyID() with valid ID', (done: DoneFn) => {
 
-    service.getEventByID("esryhsdfhsdfh").take(1).subscribe(eventList => {
-      expect(eventList.length).toBe(0);
+    service.getEventByID("KpqmlH0p7v1zl34qswN").take(1).subscribe(thisevent => {
+
+      expect(Object.keys(thisevent).length).toBe(1);
       done();
     })
 
@@ -241,15 +242,16 @@ describe('AuthService', () => {
 
   it('getWorkers()', (done: DoneFn) => {
 
-    service.getWorkers().take(1).subscribe(workerList => {
-      expect(Object.keys(workerList.users.length)).toBe(!null);
+    service.getWorkers().then(workerObj => {
+    //  console.log('worker object', workerObj);
+      expect(Object.keys(workerObj).length).toBeGreaterThan(0);
       done();
-    });
+    }).catch(error => console.log(error));
 
   });
 
 
-  it('getCurrentUserID()', (done: DoneFn) => {
+ /* it('getCurrentUserID()', (done: DoneFn) => { //Did not need to use, but kept in case it became useful later
 
     service.getCurrentUserID().take(1).subscribe(uid => {
       expect(uid).toBe(!null);
@@ -257,6 +259,7 @@ describe('AuthService', () => {
     });
 
   });
+*/
 
   it('getEmployees()', (done: DoneFn) => {
 
@@ -282,6 +285,66 @@ describe('AuthService', () => {
       expect(adminList.length).toBeGreaterThan(0);
       done();
     });
+
+  });
+
+  it('makeEEmanager()', () => {
+    spyOn(service, 'makeEEManager').and.returnValue(Promise);
+
+    expect(service.makeEEManager("")).toBe(Promise);
+
+    expect(service.makeEEManager).toHaveBeenCalled();
+  });
+
+  it('makeManagerUser()', () => {
+    spyOn(service, 'makeManagerUser').and.returnValue(Promise);
+
+    expect(service.makeManagerUser("")).toBe(Promise);
+
+    expect(service.makeManagerUser).toHaveBeenCalled();
+  });
+
+  it('makeEEAdmin()', () => {
+    spyOn(service, 'makeEEAdmin').and.returnValue(Promise);
+
+    expect(service.makeEEAdmin("")).toBe(Promise);
+
+    expect(service.makeEEAdmin).toHaveBeenCalled();
+  });
+
+  it('createUser()', () => {
+    spyOn(service, 'createUser').and.returnValue(Promise);
+
+    expect(service.createUser("", "")).toBe(Promise);
+
+    expect(service.createUser).toHaveBeenCalled();
+
+  });
+
+  it('createEvent()', () => {
+    spyOn(service, 'createEvent').and.returnValue(Promise);
+
+    expect(service.createEvent(1, new GitEvent())).toBe(Promise);
+
+    expect(service.createEvent).toHaveBeenCalled();
+  });
+
+  it('updateEvent()', () => {
+    spyOn(service, 'updateEvent').and.returnValue(Promise);
+
+    expect(service.updateEvent(1, new GitEvent(), new GitEvent())).toBe(Promise);
+
+    expect(service.updateEvent).toHaveBeenCalled();
+  });
+
+  it('getEventsByYearAllRooms() with valid reservation date', (done: DoneFn) => {
+
+
+    service.getEventsByYearAllRooms(new Date(2017, 1, 1)).then(yearList => {
+      console.log('all rooms', yearList);
+      expect(yearList).toBeGreaterThan(1);
+      done();
+    })
 
   });
 
