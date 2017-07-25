@@ -4,34 +4,30 @@
 
 export class GitEvent {
 
-  private _date: Date;
-  private _endingHour: number;
-  private _description: string;
-  private _title:string;
-  private _room: number;
-  private _members: Array<string>;
-  public _meetingDate: any;
+  private date: Date;
+  private endingHour: number;
+  private description: string;
+  private title:string;
+  private members: Array<string>;
+  public meetingDate: any;
 
   constructor(){
-    this.setEvent(new Date(), 0,'','',0,[]);
-
-
+    this.setEvent(new Date(),'','',[]);
   }
 
 
-  public setEvent(date:Date, endingHour:number,description:string, title:string, room:number, members: Array<string>) {
+  public setEvent(date:Date,description:string, title:string, members: Array<string>) {
 
-    this._date = date;
-    this._description = description;
-    this._endingHour = endingHour;
-    this._room = room;
-    this._title = title;
-
-    this._members = members;
-    this.setMeetingDate();
+    this.date = date;
+    this.description = description;
+    this.title = title;
+    this.members = members;
+    this.setEmptyMeetingDate();
   }
-  private setMeetingDate(){
-    this._meetingDate = {
+
+
+  private setEmptyMeetingDate(){
+    this.meetingDate = {
       year:0,
       month:0,
       day:0,
@@ -40,62 +36,59 @@ export class GitEvent {
     }
   }
 
+  public getMeetingDate(): any{
+    return this.meetingDate;
+  }
+
   public getMembers(): Array<string> {
-    return this._members;
+    return this.members;
   }
 
   public getDate(): Date{
-    return this._date
+    return this.date
   }
 
   public getStartingHour():number{
-    return this._date.getHours();
+    return this.date.getHours();
   }
 
   public getEndingHour(): number {
-    return this._endingHour;
+    return this.endingHour;
   }
 
   public getDescription():string{
-    return this._description;
+    return this.description;
   }
 
   public getTitle():string{
-    return this._title;
-  }
-
-  public getRoom():number{
-    return this._room;
+    return this.title;
   }
 
 
 
 
   public setDate(date: Date){
-    this._date = date;
+    this.date = date;
   }
 
   public setEndingHour(endingHour:number){
-    this._endingHour = endingHour;
+    this.endingHour = endingHour;
   }
 
   public setDescription(description: string){
-    this._description = description;
+    this.description = description;
   }
 
   public setTitle(title: string){
-     this._title = title;
+     this.title = title;
   }
 
-  public setRoom(room:number){
-    this._room = room;
-  }
 
   public setMembers(members: Array<string>){
-    this._members = members;
+    this.members = members;
   }
 
   public addMember(member: string){
-    this._members.push(member);
+    this.members.push(member);
   }
 }

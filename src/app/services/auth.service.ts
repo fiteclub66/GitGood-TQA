@@ -53,8 +53,8 @@ export class AuthService {
 
     console.log(reservation);
 
-    const _date = new Date(reservation._meetingDate.year, reservation._meetingDate.month-1,
-                            reservation._meetingDate.day, reservation._meetingDate.startingHour/100);
+    const _date = new Date(reservation.getMeetingDate().year, reservation.getMeetingDate().month-1,
+                            reservation.getMeetingDate().day, reservation.getStartingHour()/100);
 
     console.log(_date);
     return this.getEventsByDay(_date,room).then(_dayList => {
@@ -311,7 +311,6 @@ export class AuthService {
 
   public createEvent(room: number,reservation: GitEvent) {
 
-
     this.checkStartAndEndTime(reservation,room).then(dateAvailable => {
 
       if(dateAvailable){
@@ -327,9 +326,9 @@ export class AuthService {
 
   }
 
-  public updateEvent(room: number, oldEvent:any, updatedEvent: any) {
+  public updateEvent(room: number, oldEvent:GitEvent, updatedEvent: GitEvent) {
 
-    this.getEventsByHour(oldEvent,room).then(event => {
+    this.getEventsByHour(oldEvent.getDate(),room).then(event => {
 
       if(event.members.includes(this.user.email)) {
         this.db.object('/events/' + room + "/" + event.$key).update(updatedEvent)
