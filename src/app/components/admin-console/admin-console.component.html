@@ -1,0 +1,38 @@
+<div>
+
+<div class="row">
+
+  <div class="col text-center btn-lg">
+    <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-lg btn-outline-primary" id="dropdownBasic2" ngbDropdownToggle>{{selectedUser}}</button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownBasic2">
+        <button class="dropdown-item" *ngFor="let user  of users | async" (click)="onUserChange(user.email)" >{{user.email}}</button>
+      </div>
+    </div>
+
+
+      <div class="col text-center btn-lg">
+        <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-lg btn-outline-primary" id="dropdownBasic3" ngbDropdownToggle>{{selectedManager}}</button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownBasic3">
+        <button class="dropdown-item" *ngFor="let manager  of managers | async" (click)="onManagerChange(manager.email)" >{{manager.email}}</button>
+      </div>
+        </div>
+      </div>
+
+    <div class="col text-center btn-lg">
+      <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-lg btn-outline-primary" id="dropdownBasic4" ngbDropdownToggle>{{selectedAdmin}}</button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownBasic4">
+        <button class="dropdown-item" *ngFor="let admin  of admins | async" (click)="onAdminChange(admin.email)" >{{admin.email}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="text-left btn btn-lg btn-outline-danger" (click)="this.auth.makeEEManager(this.selectedUser)" >Make Manager</button>
+
+  <button class="text-center btn btn-lg btn-outline-danger" (click)="this.auth.makeManagerUser(this.selectedManager)" >Make User</button>
+
+  <button class="text-right btn btn-lg btn-outline-danger" (click)="this.auth.makeEEAdmin(this.selectedUser)" >Make Admin</button>
+</div>

@@ -1,0 +1,38 @@
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" [routerLink]="['/m']">Drake Systems ACRS</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['calendar']" routerLinkActive="active">Calendar</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['meetings/0/edit']">Schedule Meeting</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['console']">Admin Console</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <a class="text-white navbar-brand " >{{(auth.afAuth.authState | async)?.displayName}}</a>
+      <li class="nav-item dropdown" ngbDropdown>
+        <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle>
+          <i class="fa fa-user"></i> Account <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="javascript:void(0)"><i class="fa fa-fw fa-user"></i>Preferences</a>
+          <a class="dropdown-item" (click)="auth.logout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+
