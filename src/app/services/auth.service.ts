@@ -22,7 +22,11 @@ export class AuthService {
   createUser(email, password) {
 
     firebase.auth().createUserWithEmailAndPassword(email, password);
-    this.router.navigate(['/a']);
+    firebase.auth().onAuthStateChanged(user => {
+      user.sendEmailVerification();
+      this.router.navigate(['a']);
+
+    });
   }
 
 
