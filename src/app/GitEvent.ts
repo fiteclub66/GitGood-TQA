@@ -1,24 +1,22 @@
 /**
  * Created by Tenor on 7/24/2017.
  */
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 export class GitEvent {
 
-  private date: Date;
-  private endingHour: number;
   private description: string;
   private title:string;
   private members: Array<string>;
   public meetingDate: any;
 
   constructor(){
-    this.setEvent(new Date(),'','',[]);
+    this.setEvent('','',[]);
   }
 
 
-  public setEvent(date:Date,description:string, title:string, members: Array<string>) {
+  public setEvent(description:string, title:string, members: Array<string>) {
 
-    this.date = date;
     this.description = description;
     this.title = title;
     this.members = members;
@@ -31,8 +29,8 @@ export class GitEvent {
       year:0,
       month:0,
       day:0,
-      startingHour:0,
-      endingHour: 0
+      startingHour:8,
+      endingHour: 9
     }
   }
 
@@ -44,16 +42,13 @@ export class GitEvent {
     return this.members;
   }
 
-  public getDate(): Date{
-    return this.date
-  }
 
   public getStartingHour():number{
-    return this.date.getHours();
+    return this.meetingDate.startingHour;
   }
 
   public getEndingHour(): number {
-    return this.endingHour;
+    return this.meetingDate.endingHour;
   }
 
   public getDescription():string{
@@ -65,14 +60,15 @@ export class GitEvent {
   }
 
 
+public updateMeetingDateByStruct(eventStruct : NgbDateStruct): void{
+    this.meetingDate.year = eventStruct.year;
+    this.meetingDate.month = eventStruct.month;
+    this.meetingDate.day = eventStruct.day;
+}
 
-
-  public setDate(date: Date){
-    this.date = date;
-  }
 
   public setEndingHour(endingHour:number){
-    this.endingHour = endingHour;
+    this.meetingDate.endingHour = endingHour;
   }
 
   public setDescription(description: string){
@@ -88,7 +84,7 @@ export class GitEvent {
     this.members = members;
   }
 
-  public addMember(member: string){
+  public addMember(member: any){
     this.members.push(member);
   }
 }
