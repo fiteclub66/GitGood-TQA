@@ -129,7 +129,7 @@ export class AuthService {
     return this.db.object('/events/'+id);
   }
 
-  public getUsers(): FirebaseListObservable<any>{
+  public getEmployees(): FirebaseListObservable<any>{
     return this.db.list('/users/employees');
   }
 
