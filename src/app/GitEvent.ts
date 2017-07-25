@@ -1,6 +1,7 @@
 /**
  * Created by Tenor on 7/24/2017.
  */
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 export class GitEvent {
 
@@ -28,8 +29,8 @@ export class GitEvent {
       year:0,
       month:0,
       day:0,
-      startingHour:0,
-      endingHour: 0
+      startingHour:8,
+      endingHour: 9
     }
   }
 
@@ -59,7 +60,11 @@ export class GitEvent {
   }
 
 
-
+public updateMeetingDateByStruct(eventStruct : NgbDateStruct): void{
+    this.meetingDate.year = eventStruct.year;
+    this.meetingDate.month = eventStruct.month;
+    this.meetingDate.day = eventStruct.day;
+}
 
 
   public setEndingHour(endingHour:number){
@@ -79,7 +84,7 @@ export class GitEvent {
     this.members = members;
   }
 
-  public addMember(member: string){
+  public addMember(member: any){
     this.members.push(member);
   }
 }
