@@ -6,7 +6,8 @@ import * as firebase from 'firebase/app';
 import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-import {GitEvent} from "../GitEvent";
+import {GitEvent} from "../models/GitEvent";
+import {EmailService} from "./email.service";
 @Injectable()
 export class AuthService {
 
@@ -40,6 +41,7 @@ export class AuthService {
     }
   });
 }
+
 
   public getEventsByYearAllRooms(_date: Date):Promise<Array<any>> {
 
@@ -349,6 +351,8 @@ export class AuthService {
       if(dateAvailable){
         this.db.list('/events/'+room).push(reservation)
           .then(resolve => {
+            let email = new EmailService;
+            email.sendInvitationToMultipleEmails(reservation.getMembers());
             console.log("Event created in the database successfully" + resolve)
           })
           .catch(error => {
@@ -356,6 +360,8 @@ export class AuthService {
           })
       }
     });
+
+
 
   }
 
