@@ -22,7 +22,11 @@ export class AuthService {
   createUser(email, password) {
 
     firebase.auth().createUserWithEmailAndPassword(email, password);
-    this.router.navigate(['/a']);
+    firebase.auth().onAuthStateChanged(user => {
+      user.sendEmailVerification();
+      this.router.navigate(['a']);
+
+    });
   }
 
 
@@ -36,6 +40,23 @@ export class AuthService {
     }
   });
 }
+
+  public getEventsByYearAllRooms(_date: Date):Promise<Array<any>> {
+
+    return new Promise( resolve => {
+      this.db.list('/events').subscribe(roomList =>{
+        let eventsList =[];
+        roomList.forEach(room=>{
+          for(let event in room){
+            if(room[event].meetingDate.year === _date.getFullYear()){
+              eventsList.push(room[event]);
+            }
+          }
+        });
+        resolve(eventsList);
+      })
+    })
+  }
 
   public getEventsByHour(reservation: Date, room:number): Promise<any> {
 
@@ -51,46 +72,49 @@ export class AuthService {
 
   private checkStartAndEndTime(reservation: GitEvent, room:number) {
 
-    console.log(reservation);
 
+
+    let dateAvailable = true;
     const _date = new Date(reservation.getMeetingDate().year, reservation.getMeetingDate().month-1,
                             reservation.getMeetingDate().day, reservation.getStartingHour()/100);
 
     console.log(_date);
-    return this.getEventsByDay(_date,room).then(_dayList => {
+    return new Promise( resolve => {
+      this.getEventsByDay(_date,room).then(_dayList => {
 
-      const endingHourInBetween = _dayList.filter(event =>
-      event.endingHour > reservation.getEndingHour() && event.startingHour < reservation.getEndingHour());
+        console.log("dayList",_dayList);
+        const endingHourInBetween = _dayList.filter(event =>
+        event.meetingDate.endingHour > reservation.getEndingHour() && event.meetingDate.startingHour < reservation.getEndingHour());
 
-      const startingHourInBetweenList = _dayList.filter(event =>
-      event.endingHour > reservation.getStartingHour() && event.startingHour < reservation.getStartingHour());
+        const startingHourInBetweenList = _dayList.filter(event =>
+        event.meetingDate.endingHour > reservation.getStartingHour() && event.meetingDate.startingHour < reservation.getStartingHour());
 
-      const startHourList = _dayList.filter(event => event.startHour === reservation.getStartingHour());
+        const startHourList = _dayList.filter(event => event.meetingDate.startingHour === reservation.getStartingHour());
 
-      if (endingHourInBetween.length > 0 || startHourList.length > 0 || startingHourInBetweenList.length > 0) {
+        if (endingHourInBetween.length > 0 || startHourList.length > 0 || startingHourInBetweenList.length > 0) {
 
-        try {
-          throw new RangeError();
-        }
-        catch (e) {
-          if (e instanceof RangeError) {
-            if (endingHourInBetween.length > 0) {
-              console.log('The ending hour overlaps with another reservation!');
-            }
-            if (startHourList.length > 0) {
-              console.log('The starting hour is already taken!');
-            }
-            if (startingHourInBetweenList.length > 0) {
-              console.log('The starting hour lands in between the time of another meeting!');
+          try {
+            throw new RangeError();
+          }
+          catch (e) {
+            if (e instanceof RangeError) {
+              if (endingHourInBetween.length > 0) {
+                console.log('The ending hour overlaps with another reservation!');
+              }
+              if (startHourList.length > 0) {
+                console.log('The starting hour is already taken!');
+              }
+              if (startingHourInBetweenList.length > 0) {
+                console.log('The starting hour lands in between the time of another meeting!');
+              }
             }
           }
+
+          dateAvailable =  false;
         }
 
-        return false;
-      }
-
-        return true;
-
+        resolve(dateAvailable);
+      });
     });
   }
 
@@ -101,6 +125,7 @@ export class AuthService {
     return new Promise( resolver => {
       this.getEventsByMonth(reservation,room).then(_monthList => {
 
+        console.log("monthList",_monthList);
         resolver(_monthList.filter(event =>
           event.meetingDate.day === reservation.getDate()
           )
@@ -126,6 +151,7 @@ export class AuthService {
 
 
   public getEventByID(id:string): FirebaseObjectObservable<any>{
+
     return this.db.object('/events/'+id);
   }
 
@@ -142,9 +168,16 @@ export class AuthService {
     return this.db.list('/users/admin');
   }
 
-  public getWorkers(): FirebaseObjectObservable<any>{
+  public getWorkers(): Promise<any>{
 
-    return this.db.object('/users');
+    return new Promise((resolve, reject) =>{
+      this.db.object('/users').subscribe(workerList  => {
+    //    console.log('worker list', workerList);
+      resolve(workerList);
+      }, error=> {
+        console.log('error was thrown', error);
+      });
+      })
   }
 
 
@@ -328,7 +361,8 @@ export class AuthService {
 
   public updateEvent(room: number, oldEvent:GitEvent, updatedEvent: GitEvent) {
 
-    this.getEventsByHour(oldEvent.getDate(),room).then(event => {
+    const oldEventREservation = new Date(oldEvent.getMeetingDate().year, oldEvent.getMeetingDate().month,oldEvent.getMeetingDate().day, oldEvent.getMeetingDate().startingHour);
+    this.getEventsByHour(oldEventREservation,room).then(event => {
 
       if(event.members.includes(this.user.email)) {
         this.db.object('/events/' + room + "/" + event.$key).update(updatedEvent)

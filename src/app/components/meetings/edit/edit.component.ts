@@ -15,7 +15,7 @@ import {GitEvent} from "../../../GitEvent";
 })
 export class EditComponent implements OnInit, OnDestroy {
 
-  members: Subscription;
+  members: Promise<any>;
   private sub: any;
   private id = "0";
   protected dataService: CompleterData;
@@ -45,7 +45,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   console.log(this.event);
 
-    this.members = this.authService.getWorkers().subscribe(users => {
+    this.members = this.authService.getWorkers().then(users => {
       const mergedUsers = Object.assign({}, users.employees, users.managers, users.admin);
       const usersArray = Object.keys(mergedUsers).map((k) => mergedUsers[k]);
       console.log(usersArray);
@@ -75,7 +75,6 @@ export class EditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
 
-    this.members.unsubscribe();
     this.sub.unsubscribe();
   }
 

@@ -5,21 +5,18 @@ import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 export class GitEvent {
 
-  private date: Date;
-  private endingHour: number;
-  private description: string;
-  private title:string;
+  public description: string;
+  public title:string;
   private members: Array<string>;
   public meetingDate: any;
 
   constructor(){
-    this.setEvent(new Date(),'','',[]);
+    this.setEvent('','',[]);
   }
 
 
-  public setEvent(date:Date,description:string, title:string, members: Array<string>) {
+  public setEvent(description:string, title:string, members: Array<string>) {
 
-    this.date = date;
     this.description = description;
     this.title = title;
     this.members = members;
@@ -45,9 +42,6 @@ export class GitEvent {
     return this.members;
   }
 
-  public getDate(): Date{
-    return this.date
-  }
 
   public getStartingHour():number{
     return this.meetingDate.startingHour;
@@ -72,12 +66,9 @@ public updateMeetingDateByStruct(eventStruct : NgbDateStruct): void{
     this.meetingDate.day = eventStruct.day;
 }
 
-  public setDate(date: Date){
-    this.date = date;
-  }
 
   public setEndingHour(endingHour:number){
-    this.endingHour = endingHour;
+    this.meetingDate.endingHour = endingHour;
   }
 
   public setDescription(description: string){
