@@ -3,19 +3,53 @@
  */
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
+export class Member{
+  public name : string;
+  public email: string;
+}
+
 export class GitEvent {
 
   public description: string;
   public title:string;
-  private members: Array<string>;
+  private members: Array<Member>;
   public meetingDate: any;
+  public $key:string;
 
   constructor(){
     this.setEvent('','',[]);
   }
 
+  static fromData(obj: any) : GitEvent
+  {
+    let e = new GitEvent();
+    e.title = obj.title;
+    e.description = obj.description;
+    e.meetingDate = obj.meetingDate;
+    e.$key = obj.$key;
+    e.members = obj.members.map((member) => {
+      let m  = new Member();
+      m.email = member.email;
+      m.name = member.name;
+      return m;
+    });
 
-  public setEvent(description:string, title:string, members: Array<string>) {
+    return e;
+
+  }
+
+  public getStartingDate() : Date {
+        return new Date(this.meetingDate.year, this.meetingDate.month-1, this.meetingDate.day, this.meetingDate.startingHour/100,0,0)
+   // return new Date(this.meetingDate.year, this.meetingDate.month, this.meetingDate.day, this.meetingDate.startingHour)
+  }
+
+  public getEndingDate() : Date {
+    return new Date(this.meetingDate.year, this.meetingDate.month-1, this.meetingDate.day, this.meetingDate.endingHour/100,0,0)
+    // return new Date(this.meetingDate.year, this.meetingDate.month, this.meetingDate.day, this.meetingDate.endingHour)
+  }
+
+
+  public setEvent(description:string, title:string, members: Array<Member>) {
 
     this.description = description;
     this.title = title;
@@ -38,7 +72,7 @@ export class GitEvent {
     return this.meetingDate;
   }
 
-  public getMembers(): Array<string> {
+  public getMembers(): Array<Member> {
     return this.members;
   }
 
@@ -80,7 +114,7 @@ public updateMeetingDateByStruct(eventStruct : NgbDateStruct): void{
   }
 
 
-  public setMembers(members: Array<string>){
+  public setMembers(members: Array<Member>){
     this.members = members;
   }
 
