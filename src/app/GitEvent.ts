@@ -5,8 +5,8 @@ import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 export class GitEvent {
 
-  private description: string;
-  private title:string;
+  public description: string;
+  public title:string;
   private members: Array<string>;
   public meetingDate: any;
 
