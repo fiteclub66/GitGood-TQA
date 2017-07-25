@@ -37,13 +37,19 @@ export class AuthService {
   });
 }
 
-  public getEventsByYearAllRooms(_date: Date): FirebaseListObservable<any> {
-    return this.db.list('/events', {
-      query: {
-        orderByChild: 'meetingDate/year',
-        equalTo: _date.getFullYear()
-      }
-    });
+  public getEventsByYearAllRooms(_date: Date) {
+
+    return new Promise( resolve => {
+      this.db.list('/events').subscribe(roomsList =>{
+        roomsList.forEach(room =>{
+          console.log(room);
+          for(let event in room){
+            resolve(room[event].map(x=>x).filter(room[event].meetingDate.year === _date.getFullYear()))
+          }
+
+        })
+      })
+    })
   }
 
   public getEventsByHour(reservation: Date, room:number): Promise<any> {
@@ -139,6 +145,7 @@ export class AuthService {
 
 
   public getEventByID(id:string): FirebaseObjectObservable<any>{
+
     return this.db.object('/events/'+id);
   }
 
@@ -155,9 +162,16 @@ export class AuthService {
     return this.db.list('/users/admin');
   }
 
-  public getWorkers(): FirebaseObjectObservable<any>{
+  public getWorkers(): Promise<any>{
 
-    return this.db.object('/users');
+    return new Promise((resolve, reject) =>{
+      this.db.object('/users').subscribe(workerList  => {
+    //    console.log('worker list', workerList);
+      resolve(workerList);
+      }, error=> {
+        console.log('error was thrown', error);
+      });
+      })
   }
 
 
