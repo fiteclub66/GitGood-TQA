@@ -352,6 +352,7 @@ export class AuthService {
 
   public createEvent(room: number,reservation: GitEvent) {
 
+    let route = this.router;
     this.checkStartAndEndTime(reservation,room).then(dateAvailable => {
 
       if(dateAvailable){
@@ -360,6 +361,7 @@ export class AuthService {
             let email = new EmailService;
             email.sendInvitationToMultipleEmails(reservation.getMembers());
             console.log("Event created in the database successfully" + resolve)
+            route.navigate(['/a']);
           })
           .catch(error => {
             console.log("Error occurred\n" + error.message);
