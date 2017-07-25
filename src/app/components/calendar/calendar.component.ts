@@ -198,6 +198,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Grabs events from the database and formats it for the calendar
     this._root.take(1).subscribe(x => {
+      console.log("XX",x);
       x.forEach(entry => {
 
         console.log(entry.meetingDate);

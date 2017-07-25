@@ -28,6 +28,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   }
 
+  rooms = [{number:1,name:"Room 1"}, {number:2,name:"Room 2"},{number:3,name:"Room 3"},];
+
 
   handleAddMember(obj: any) {
     console.log(obj);
@@ -70,6 +72,8 @@ export class EditComponent implements OnInit, OnDestroy {
     return this.dateService.isDateDisabled(new Date(date.year, date.month - 1, date.day, 0, 0, 0));
 
   };
+
+
 
 
 
