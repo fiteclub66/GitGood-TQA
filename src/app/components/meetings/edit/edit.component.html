@@ -6,7 +6,13 @@
 </div>
 <div class="row">
     <div class="col">
-        <form>
+        <form novalidate #meetingForm="ngForm">
+        <div class="form-group row">
+                <label for="example-search-input" class="col-2 col-form-label">Title</label>
+                <div class="col-3">
+                    <input type="text" [(ngModel)]="event.title" name="title"  [ngModelOptions]="{standalone: true}"class="form-control" id="exampleTextarea" rows="3" [required]="true">
+                </div>
+            </div>
             <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Start Date & Time</label>
                 <div class="col-3">
@@ -56,9 +62,9 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Description</label>
+                <label for="example-search-input"  class="col-2 col-form-label">Description</label>
                 <div class="col-10">
-                    <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
+                    <textarea class="form-control" [(ngModel)]="event.description"  [ngModelOptions]="{standalone: true}" id="exampleTextarea" rows="3"></textarea>
                 </div>
             </div>
             <div class="form-group row">
@@ -108,6 +114,6 @@
 </div>
 <div class="row">
     <div class="col">
-        <button (click)="this.authService.createEvent(1,this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
+        <button [disabled]="meetingForm.invalid" (click)="this.authService.createEvent(1,this.event)" type="button" class="btn btn-success float-right">{{id == "0" ? 'Create' : 'Edit'}}</button>
     </div>
 </div>
