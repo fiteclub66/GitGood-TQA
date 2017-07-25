@@ -150,7 +150,7 @@ describe('AuthService', () => {
 
     service.getEventsByMonth(new Date(2017, 6, 9), 1).then(answer => {
       console.log(answer);
-      expect(answer.length).toBe(1);
+      expect(answer.length).toBe(9);
       done();
     })
 
@@ -173,7 +173,7 @@ describe('AuthService', () => {
 
     service.getEventsByYear(new Date(2017, 6, 1), 1).take(1).subscribe(yearList => {
 
-      expect(yearList.length).toEqual(6);
+      expect(yearList.length).toEqual(10);
       done();
     })
 
@@ -195,7 +195,7 @@ describe('AuthService', () => {
 
     service.getEventsByDay(new Date(2017, 6, 13, 1, 1, 1), 1).then(dayList => {
 
-      expect(dayList.length).toEqual(3);
+      expect(dayList.length).toEqual(2);
       done();
     })
 
@@ -224,16 +224,16 @@ describe('AuthService', () => {
   });
   it('getEventbyID() without valid ID', (done: DoneFn) => {
 
-    service.getEventByID("").take(1).subscribe(eventList => {
-      expect(eventList.length).toBe(0);
+    service.getEventByID("ggggggggggggggggg").take(1).subscribe(thisEvent => {
+      expect(Object.keys(thisEvent).length).toBe(0);
       done();
     })
 
   });
   it('getEventbyID() with valid ID', (done: DoneFn) => {
 
-    service.getEventByID("esryhsdfhsdfh").take(1).subscribe(eventList => {
-      expect(eventList.length).toBe(0);
+    service.getEventByID("KpqmlH0p7v1zl34qswN").take(1).subscribe(thisevent => {
+      expect(Object.keys(thisevent).length).toBe(1);
       done();
     })
 
@@ -241,15 +241,15 @@ describe('AuthService', () => {
 
   it('getWorkers()', (done: DoneFn) => {
 
-    service.getWorkers().take(1).subscribe(workerList => {
-      expect(Object.keys(workerList.users.length)).toBe(!null);
+    service.getWorkers().take(1).subscribe(workerObj => {
+      expect(Object.keys(workerObj.length)).toBeGreaterThan(0);
       done();
     });
 
   });
 
 
-  it('getCurrentUserID()', (done: DoneFn) => {
+ /* it('getCurrentUserID()', (done: DoneFn) => { //Did not need to use, but kept in case it became useful later
 
     service.getCurrentUserID().take(1).subscribe(uid => {
       expect(uid).toBe(!null);
@@ -257,6 +257,7 @@ describe('AuthService', () => {
     });
 
   });
+*/
 
   it('getEmployees()', (done: DoneFn) => {
 
