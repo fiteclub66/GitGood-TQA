@@ -27,6 +27,8 @@ import {EmailService} from "../../services/email.service";
 import {HttpClient} from "selenium-webdriver/http";
 import {Http, HttpModule} from "@angular/http";
 import {GitEvent} from "../../models/GitEvent";
+import { Router, ActivatedRoute } from '@angular/router';
+
 
 
 
@@ -65,7 +67,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   viewDate: Date = new Date();
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
-  constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal,private http:Http) {
+  constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal,private http:Http, private r:ActivatedRoute, private router: Router) {
     this._user = afAuth.authState;
 
     this._root = authService.getEventsByYear(this.viewDate,1);
@@ -165,8 +167,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = {event, action};
-    this.modal.open(this.modalContent, {size: 'lg'});
+    // this.router.navigate(['404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
+
+    this.router.navigate(['../meetings', event.meta.gitEvent.$key], { relativeTo: this.r })
+    // this.modalData = {event, action};
+    // this.modal.open(this.modalContent, {size: 'lg'});
   }
 
    modalData: {
