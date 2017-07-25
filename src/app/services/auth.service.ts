@@ -41,17 +41,19 @@ export class AuthService {
   });
 }
 
-  public getEventsByYearAllRooms(_date: Date) {
+  public getEventsByYearAllRooms(_date: Date):Promise<Array<any>> {
 
     return new Promise( resolve => {
-      this.db.list('/events').subscribe(roomsList =>{
-        roomsList.forEach(room =>{
-          console.log(room);
+      this.db.list('/events').subscribe(roomList =>{
+        let eventsList =[];
+        roomList.forEach(room=>{
           for(let event in room){
-            resolve(room[event].map(x=>x).filter(room[event].meetingDate.year === _date.getFullYear()))
+            if(room[event].meetingDate.year === _date.getFullYear()){
+              eventsList.push(room[event]);
+            }
           }
-
-        })
+        });
+        resolve(eventsList);
       })
     })
   }

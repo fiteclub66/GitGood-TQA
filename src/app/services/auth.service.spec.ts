@@ -342,7 +342,8 @@ describe('AuthService', () => {
 
     service.getEventsByYearAllRooms(new Date(2017, 1, 1)).then(yearList => {
       console.log('all rooms', yearList);
-      expect(yearList).toBeGreaterThan(1);
+      expect(yearList.length).toBeGreaterThan(0);
+
       done();
     })
 
