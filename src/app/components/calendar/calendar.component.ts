@@ -22,6 +22,9 @@ import {
 } from 'angular-calendar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {FirebaseListObservable} from "angularfire2/database";
+import {EmailService} from "../../services/email.service";
+import {HttpClient} from "selenium-webdriver/http";
+import {Http, HttpModule} from "@angular/http";
 
 
 
@@ -47,7 +50,8 @@ const colors: any = {
   selector: 'app-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  styleUrls: ['./calendar.component.css'],
+  providers:[HttpModule]
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 
@@ -58,7 +62,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   viewDate: Date = new Date();
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
-  constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal) {
+  constructor(public afAuth: AngularFireAuth, public authService: AuthService, private modal: NgbModal,private http:Http) {
     this._user = afAuth.authState;
 
     this._root = authService.getEventsByYear(this.viewDate,1);
@@ -177,8 +181,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-
-
     // Grabs events from the database and formats it for the calendar
     this._root.take(1).subscribe(x => {
       x.forEach(entry => {
