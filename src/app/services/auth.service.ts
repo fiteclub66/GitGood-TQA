@@ -6,7 +6,7 @@ import * as firebase from 'firebase/app';
 import {AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable} from 'angularfire2/database';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-import {GitEvent} from "../GitEvent";
+import {GitEvent} from "../models/GitEvent";
 @Injectable()
 export class AuthService {
 

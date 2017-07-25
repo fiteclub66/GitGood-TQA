@@ -7,7 +7,7 @@ import {AngularFireAuth} from "angularfire2/auth";
 import {AngularFireModule, FirebaseApp} from "angularfire2";
 import {firebaseConfig} from "../../environments/environment.prod";
 import Spy = jasmine.Spy;
-import {GitEvent} from "../GitEvent";
+import {GitEvent} from "../models/GitEvent";
 
 describe('AuthService', () => {
 
