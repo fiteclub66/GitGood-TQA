@@ -31,6 +31,7 @@ import { AdminComponentComponent } from './components/admin-component/admin-comp
 import {AdminGuard} from "./guards/admin.guard";
 import { AdminConsoleComponent } from './components/admin-console/admin-console.component';
 import {UserGuard} from "./guards/user.guard";
+import { NgForm } from '@angular/forms';
 
 
 
@@ -115,6 +116,7 @@ export const appRoutes: Routes = [
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+   
     CustomFormsModule,
     HttpModule,
     SelectModule,
