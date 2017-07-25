@@ -37,6 +37,15 @@ export class AuthService {
   });
 }
 
+  public getEventsByYearAllRooms(_date: Date): FirebaseListObservable<any> {
+    return this.db.list('/events', {
+      query: {
+        orderByChild: 'meetingDate/year',
+        equalTo: _date.getFullYear()
+      }
+    });
+  }
+
   public getEventsByHour(reservation: Date, room:number): Promise<any> {
 
 
@@ -54,20 +63,21 @@ export class AuthService {
 
 
     let dateAvailable = true;
-    const _date = new Date(reservation.getMeetingDate().year, reservation.getMeetingDate().month,
+    const _date = new Date(reservation.getMeetingDate().year, reservation.getMeetingDate().month-1,
                             reservation.getMeetingDate().day, reservation.getStartingHour()/100);
 
     console.log(_date);
     return new Promise( resolve => {
       this.getEventsByDay(_date,room).then(_dayList => {
 
+        console.log("dayList",_dayList);
         const endingHourInBetween = _dayList.filter(event =>
-        event.endingHour > reservation.getEndingHour() && event.startingHour < reservation.getEndingHour());
+        event.meetingDate.endingHour > reservation.getEndingHour() && event.meetingDate.startingHour < reservation.getEndingHour());
 
         const startingHourInBetweenList = _dayList.filter(event =>
-        event.endingHour > reservation.getStartingHour() && event.startingHour < reservation.getStartingHour());
+        event.meetingDate.endingHour > reservation.getStartingHour() && event.meetingDate.startingHour < reservation.getStartingHour());
 
-        const startHourList = _dayList.filter(event => event.startHour === reservation.getStartingHour());
+        const startHourList = _dayList.filter(event => event.meetingDate.startingHour === reservation.getStartingHour());
 
         if (endingHourInBetween.length > 0 || startHourList.length > 0 || startingHourInBetweenList.length > 0) {
 
@@ -103,6 +113,7 @@ export class AuthService {
     return new Promise( resolver => {
       this.getEventsByMonth(reservation,room).then(_monthList => {
 
+        console.log("monthList",_monthList);
         resolver(_monthList.filter(event =>
           event.meetingDate.day === reservation.getDate()
           )
