@@ -31,6 +31,7 @@
                     <span class="input-group-addon">
 
                     	{{ event.getStartingHour() < 12 ? "AM" : "PM"}}
+
                     </span>
                         </div>
                     <div class="form-control-feedback"  *ngIf="time.errors?.range">{{(event.getStartingHour()< 8 || event.getStartingHour() > 17 )? "Start time must during business hours (8AM-5PM)" : "Start time must begin before end time"}}</div>
