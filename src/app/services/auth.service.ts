@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import {GitEvent} from "../models/GitEvent";
 import {EmailService} from "./email.service";
+import {Observable} from "rxjs/Observable";
 @Injectable()
 export class AuthService {
 
@@ -152,9 +153,13 @@ export class AuthService {
 
 
 
-  public getEventByID(id:string): FirebaseObjectObservable<any>{
+  public getEventByID(id:string): Promise<any>{
 
-    return this.db.object('/events/'+id);
+    return new Promise(resolve => {
+      this.db.object('/events/1/'+id).subscribe(event => {
+        resolve(event);
+      })
+    });
   }
 
   public getEmployees(): FirebaseListObservable<any>{

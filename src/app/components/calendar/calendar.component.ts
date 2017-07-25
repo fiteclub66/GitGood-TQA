@@ -211,6 +211,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
            meta:{
              gitEvent: event
            }
+           
          });
          this.refresh.next();
         // this.events.push({

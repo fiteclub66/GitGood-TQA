@@ -10,27 +10,28 @@ import {Subscription} from "rxjs/Subscription";
 })
 export class ViewComponent implements OnInit, OnDestroy {
 
-  _eventByID : Subscription;
-  private sub : any;
-  private id : string = "234";
-  private meeting : any = {};
+  _eventByID: Promise<any>;
+  private sub: any;
+  private id: string = "234";
+  private meeting: any = {};
 
 
-  constructor(private route: ActivatedRoute, private router: Router, public authService: AuthService) { }
+  constructor(private route: ActivatedRoute, private router: Router, public authService: AuthService) {
+  }
 
-   ngOnInit() {
+  ngOnInit() {
 
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
       console.log('local ID', this.id);
-      this._eventByID = this.authService.getEventByID(this.id).subscribe(event => {
+      this._eventByID = this.authService.getEventByID(this.id).then(event => {
         console.log('matching', event);
 
         // if no meeting is found, redirect to 404
-        if(!event){
+        if (!event) {
           this.router.navigate(['404'], {queryParams: {'message': `Meeting by ID ${this.id} not found`}});
         }
-        else{
+        else {
           this.meeting = event
         }
       });
@@ -40,31 +41,27 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   //expects format like 1000, 1300
-  private formatTime(time: number): string
-  {
-    if(!time) {
+  private formatTime(time: number): string {
+    if (!time) {
       return ""
     }
 
-  	let prefix = '';
-  	let am = true;
-  	if(time > 1100)
-  	{
-  		am = false;
-  	}
-  	if(time < 1000)
-  	{
-  		prefix = time.toString()[0];
-  	}
-  	else{
-  		prefix = time.toString().slice(0, 2);
-  	}
-  	return `${prefix}:00 ${am ? "AM" :  "PM"}`
+    let prefix = '';
+    let am = true;
+    if (time > 1100) {
+      am = false;
+    }
+    if (time < 1000) {
+      prefix = time.toString()[0];
+    }
+    else {
+      prefix = time.toString().slice(0, 2);
+    }
+    return `${prefix}:00 ${am ? "AM" : "PM"}`
   }
 
-  ngOnDestroy(){
-  	this.sub.unsubscribe();
-    this._eventByID.unsubscribe();
-  }
+  ngOnDestroy() {
+    this.sub.unsubscribe();
 
+  }
 }
